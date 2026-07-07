@@ -71,7 +71,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
     >
       <motion.div
         style={{ scale, opacity, y }}
-        className="flex items-center gap-12"
+        className="flex items-center justify-between gap-12"
       >
         <div className="flex flex-col">
           <motion.p
