@@ -9,7 +9,7 @@ Personal developer portfolio. Repo: `C:\Users\bielc\Dev\portfolio`
 - Next.js 16.2.10 (App Router) + TypeScript
 - Tailwind CSS v4
 - Base UI (`@base-ui/react`) — Lyra preset
-- IconCloud (magicui) no hero via canvas 2D — `components/IconCloud.tsx` (histórico: PixelBlast → LetterGlitch → IconCloud; PixelBlast.tsx ainda existe sem uso, `three`/`postprocessing` removíveis; LetterGlitch/LogoLoop/TechLogoLoop foram deletados)
+- IconCloud (magicui) no hero via canvas 2D — `components/IconCloud.tsx` (histórico: PixelBlast → LetterGlitch → IconCloud; todos os anteriores deletados, `three`/`postprocessing`/`@base-ui/react`/`class-variance-authority` desinstalados na limpeza de jul/2026)
 - GlyphMatrix foi adicionado e removido (lagava o IconCloud) — não recriar. Fundo atual: grain estático estilo paperclip.ing (utility `.grain` no globals.css — SVG feTurbulence data-URI, mix-blend-overlay opacity-25), CSS puro em page.tsx, zero JS. O glow lavanda blur foi removido a pedido do usuário ("light on background") — não recriar
 - Tema: dark por padrão (:root), light via classe `.light` no html + `@custom-variant light` no globals.css; toggler `components/AnimatedThemeToggler.tsx` (magicui adaptado — View Transitions circle reveal, persiste em localStorage("theme"), fixed top-6 right-6). Overrides `light:` espalhados em page.tsx/HeroSection
 - Icons: `@phosphor-icons/react` (UI) + `react-icons/si` (ícones de tech no IconCloud)
@@ -41,9 +41,7 @@ Reescrita minimalista (jul/2026) — princípio: "subtração é o design". Cont
 
 ## Dependencies added
 - `motion` — animações do HeroSection, TerminalIntro
-- `react-icons` — logos de tech (simple-icons) no TechLogoLoop
-- `dotted-map` — dep interna do WorldMap (instalado, componente removido mas dep pode permanecer)
-- `three` / `postprocessing` — só usados pelo PixelBlast (sem uso atual)
+- IconCloud usa imagens do cdn.simpleicons.org — sem dep de ícones de marca
 
 ## shadcn / third-party components
 - `components/ui/terminal-animation.tsx` — cult-ui
@@ -57,8 +55,7 @@ Reescrita minimalista (jul/2026) — princípio: "subtração é o design". Cont
 
 ## IconCloud (hero) — Notes
 - `IconCloud.tsx` é "use client", canvas lógico 400x400 (CANVAS_SIZE) com backing store escalado por devicePixelRatio (retina-sharp; offscreens de ícone também escalam por dpr)
-- Modo atual: prop `images` com URLs `https://cdn.simpleicons.org/{slug}/{slug}` — cada ícone na cor de marca real (GitHub preto, TS azul...); slug inválido no path de cor → CDN usa a cor default da marca. Slugs em `techSlugs` no HeroSection
-- Modo alternativo `icons` (React nodes) usa renderToString — exigiria `color` explícita (currentColor vira preto no data-URI)
+- Prop única `images` com URLs `https://cdn.simpleicons.org/{slug}/{slug}` — cada ícone na cor de marca real (GitHub preto, TS azul...); slug inválido no path de cor → CDN usa a cor default da marca. Slugs em `techSlugs` no HeroSection. (O modo `icons`/renderToString do magicui original foi removido por não ter uso)
 - Esfera Fibonacci interativa: arrastar rotaciona, clicar num ícone centraliza ele; ~28 ícones para a esfera parecer cheia como o demo do magicui
 - react-icons foi desinstalado (jul/2026)
 
