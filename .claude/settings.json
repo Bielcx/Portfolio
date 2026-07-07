@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "WebFetch(domain:ui.aceternity.com)",
+      "Bash(npm run *)",
+      "Bash(npx shadcn@latest add @aceternity/3d-card input textarea label badge --yes)",
+      "Bash(npx shadcn@latest add https://cult-ui.com/r/terminal-animation.json https://cult-ui.com/r/lightboard.json --yes)"
+    ]
+  }
+}
