@@ -11,6 +11,11 @@ const projects = [
     stack: ["Next.js", "TypeScript", "Web3", "Hive Blockchain"],
     href: "https://skatehive.app",
     repo: "https://github.com/SkateHive/skatehive3.0",
+    // ponytail: skatehive.app sits behind a bot-verification checkpoint that
+    // serves screenshot bots a blank interstitial instead of the real page, so
+    // the live microlink screenshot never renders. Using a pre-captured static
+    // image instead — swap back to shot(href) if the checkpoint is ever lifted.
+    screenshotSrc: "/skatehive-preview.png",
   },
   {
     title: "Fiveout Dashboard",
@@ -27,6 +32,14 @@ const projects = [
     stack: ["React 19", "Three.js", "R3F", "Framer Motion", "Vite"],
     href: "https://mirante-skateshop.vercel.app",
     repo: "https://github.com/Bielcx/mirante-skateshop",
+  },
+  {
+    title: "VentureFi",
+    description:
+      "TCC em Sistemas de Informação (FIAP) — plataforma SaaS fullstack de gestão financeira, com sugestões inteligentes de investimento e relatórios interativos.",
+    stack: ["Angular 20", "TypeScript", "Angular Material", "Chart.js"],
+    href: "https://venturefi-gikn.vercel.app",
+    repo: "https://github.com/Bielcx/VentureFi",
   },
 ];
 
@@ -67,16 +80,18 @@ function CardLinks({ href, repo }: { href: string; repo: string }) {
 function Screenshot({
   href,
   title,
+  screenshotSrc,
   className = "",
 }: {
   href: string;
   title: string;
+  screenshotSrc?: string;
   className?: string;
 }) {
   return (
     <div className={`relative overflow-hidden bg-[#1a1a18] light:bg-neutral-100 ${className}`}>
       <img
-        src={shot(href)}
+        src={screenshotSrc ?? shot(href)}
         alt={`${title} — preview`}
         loading="lazy"
         className="absolute inset-0 h-full w-full object-cover object-top grayscale contrast-105 brightness-[.85] transition-[filter,transform] duration-500 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100 group-hover:scale-[1.03]"
@@ -122,6 +137,7 @@ export default function SelectedWork() {
         <Screenshot
           href={feature.href}
           title={feature.title}
+          screenshotSrc={feature.screenshotSrc}
           className="min-h-[280px] border-t md:border-t-0 md:border-l border-[#948F85]/15 light:border-neutral-200"
         />
       </article>
@@ -136,6 +152,7 @@ export default function SelectedWork() {
             <Screenshot
               href={project.href}
               title={project.title}
+              screenshotSrc={project.screenshotSrc}
               className="aspect-video border-b border-[#948F85]/15 light:border-neutral-200"
             />
             <div className="flex flex-1 flex-col p-6">
