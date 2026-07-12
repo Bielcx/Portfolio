@@ -78,7 +78,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="font-mono text-xs text-[#b497cf] tracking-[0.2em] uppercase mb-6"
+            className="font-mono text-xs text-[#b497cf] light:text-[#8a6bab] tracking-[0.2em] uppercase mb-6"
           >
             Available for work
           </motion.p>

@@ -119,7 +119,7 @@ function Screenshot({
         src={screenshotSrc ?? shot(href)}
         alt={`${title} — preview`}
         loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover object-top grayscale contrast-105 brightness-[.85] transition-[filter,transform] duration-500 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100 group-hover:scale-[1.03]"
+        className="absolute inset-0 h-full w-full object-cover object-top grayscale contrast-105 brightness-[.85] light:brightness-100 transition-[filter,transform] duration-500 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100 group-hover:scale-[1.03]"
       />
     </div>
   );
@@ -142,7 +142,7 @@ export default function SelectedWork() {
         {projects.map((project, i) => (
           <article
             key={project.title}
-            className="group relative flex flex-col overflow-hidden border border-[#948F85]/15 light:border-neutral-200 bg-[#F3E6C4]/[0.015] light:bg-neutral-900/[0.02] transition-colors hover:border-[#948F85]/35"
+            className="group relative flex flex-col overflow-hidden border border-[#948F85]/15 light:border-neutral-200 bg-[#F3E6C4]/[0.015] light:bg-neutral-900/[0.02] transition-colors hover:border-[#948F85]/35 light:hover:border-neutral-400"
           >
             <BorderBeam delay={i * 2.25} />
             <Screenshot
@@ -153,7 +153,7 @@ export default function SelectedWork() {
             />
             <div className="flex flex-1 flex-col p-6">
               <div className="flex items-baseline gap-3">
-                <span className="font-mono text-[11px] text-[#948F85]/50 light:text-neutral-300">
+                <span className="font-mono text-[11px] text-[#948F85]/50 light:text-neutral-400">
                   0{i + 1}
                 </span>
                 <h3 className="text-[17px] font-bold tracking-tight text-[#F3E6C4] light:text-neutral-900 transition-colors group-hover:text-[#b497cf] light:group-hover:text-[#8a6bab]">
