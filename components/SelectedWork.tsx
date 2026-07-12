@@ -142,7 +142,7 @@ export default function SelectedWork() {
         {projects.map((project, i) => (
           <article
             key={project.title}
-            className="group relative flex flex-col border border-[#948F85]/15 light:border-neutral-200 bg-[#F3E6C4]/[0.015] light:bg-neutral-900/[0.02] transition-colors hover:border-[#948F85]/35"
+            className="group relative flex flex-col overflow-hidden border border-[#948F85]/15 light:border-neutral-200 bg-[#F3E6C4]/[0.015] light:bg-neutral-900/[0.02] transition-colors hover:border-[#948F85]/35"
           >
             <BorderBeam delay={i * 2.25} />
             <Screenshot
