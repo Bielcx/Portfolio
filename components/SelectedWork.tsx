@@ -3,18 +3,22 @@
 
 import { ArrowUpRight } from "@phosphor-icons/react/ssr";
 
+const shot = (url: string) =>
+  `https://api.microlink.io/?url=${url}&screenshot=true&meta=false&embed=screenshot.url`;
+
 const projects = [
   {
     title: "SkateHive",
     description:
       "Plataforma Web3 de skateboarding — rede social descentralizada com criação de conteúdo, curadoria de vídeos e recompensas em crypto. Blockchain Hive.",
     stack: ["Next.js", "TypeScript", "Web3", "Hive Blockchain"],
-    href: "https://skatehive.app",
+    href: "https://skatehive.app/home",
     repo: "https://github.com/SkateHive/skatehive3.0",
     // ponytail: skatehive.app sits behind a bot-verification checkpoint that
     // serves screenshot bots a blank interstitial instead of the real page, so
     // the live microlink screenshot never renders. Using a pre-captured static
-    // image instead — swap back to shot(href) if the checkpoint is ever lifted.
+    // capture of /home instead — swap back to shot(href) if the checkpoint is
+    // ever lifted.
     screenshotSrc: "/skatehive-preview.png",
   },
   {
@@ -40,11 +44,29 @@ const projects = [
     stack: ["Angular 20", "TypeScript", "Angular Material", "Chart.js"],
     href: "https://venturefi-gikn.vercel.app",
     repo: "https://github.com/Bielcx/VentureFi",
+    screenshotSrc: shot("https://venturefi-gikn.vercel.app/platform/dashboard"),
   },
 ];
 
-const shot = (url: string) =>
-  `https://api.microlink.io/?url=${url}&screenshot=true&meta=false&embed=screenshot.url`;
+// ponytail: CSS-only take on magicui's BorderBeam (no motion/react needed) —
+// keyframe `border-beam` lives in globals.css.
+function BorderBeam({ delay = 0 }: { delay?: number }) {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute inset-0 border border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)]"
+    >
+      <div
+        className="absolute aspect-square w-24 bg-gradient-to-l from-[#b497cf] via-[#b497cf]/40 to-transparent light:from-[#8a6bab] light:via-[#8a6bab]/40"
+        style={{
+          offsetPath: "rect(0 auto auto 0)",
+          animation: `border-beam 9s linear infinite`,
+          animationDelay: `${delay}s`,
+        }}
+      />
+    </div>
+  );
+}
 
 function StackBadge({ label }: { label: string }) {
   return (
@@ -101,8 +123,6 @@ function Screenshot({
 }
 
 export default function SelectedWork() {
-  const [feature, ...rest] = projects;
-
   return (
     <section id="work" className="mx-auto max-w-5xl px-8 py-24">
       {/* Header */}
@@ -115,40 +135,13 @@ export default function SelectedWork() {
         </p>
       </div>
 
-      {/* Feature card */}
-      <article className="group mb-6 grid border border-[#948F85]/15 light:border-neutral-200 bg-[#F3E6C4]/[0.015] light:bg-neutral-900/[0.02] transition-colors hover:border-[#948F85]/35 md:grid-cols-2">
-        <div className="flex flex-col p-8">
-          <div className="flex items-baseline gap-3">
-            <span className="font-mono text-[11px] text-[#948F85]/50 light:text-neutral-300">01</span>
-            <h3 className="text-[22px] font-bold tracking-tight text-[#F3E6C4] light:text-neutral-900 transition-colors group-hover:text-[#b497cf] light:group-hover:text-[#8a6bab]">
-              {feature.title}
-            </h3>
-          </div>
-          <p className="mt-4 max-w-[44ch] text-[13px] leading-relaxed text-[#948F85] light:text-neutral-600">
-            {feature.description}
-          </p>
-          <div className="mt-6 flex flex-wrap gap-2">
-            {feature.stack.map((t) => (
-              <StackBadge key={t} label={t} />
-            ))}
-          </div>
-          <CardLinks href={feature.href} repo={feature.repo} />
-        </div>
-        <Screenshot
-          href={feature.href}
-          title={feature.title}
-          screenshotSrc={feature.screenshotSrc}
-          className="min-h-[280px] border-t md:border-t-0 md:border-l border-[#948F85]/15 light:border-neutral-200"
-        />
-      </article>
-
-      {/* Secondary cards */}
       <div className="grid gap-6 md:grid-cols-2">
-        {rest.map((project, i) => (
+        {projects.map((project, i) => (
           <article
             key={project.title}
-            className="group flex flex-col border border-[#948F85]/15 light:border-neutral-200 bg-[#F3E6C4]/[0.015] light:bg-neutral-900/[0.02] transition-colors hover:border-[#948F85]/35"
+            className="group relative flex flex-col border border-[#948F85]/15 light:border-neutral-200 bg-[#F3E6C4]/[0.015] light:bg-neutral-900/[0.02] transition-colors hover:border-[#948F85]/35"
           >
+            <BorderBeam delay={i * 2.25} />
             <Screenshot
               href={project.href}
               title={project.title}
@@ -158,7 +151,7 @@ export default function SelectedWork() {
             <div className="flex flex-1 flex-col p-6">
               <div className="flex items-baseline gap-3">
                 <span className="font-mono text-[11px] text-[#948F85]/50 light:text-neutral-300">
-                  0{i + 2}
+                  0{i + 1}
                 </span>
                 <h3 className="text-[17px] font-bold tracking-tight text-[#F3E6C4] light:text-neutral-900 transition-colors group-hover:text-[#b497cf] light:group-hover:text-[#8a6bab]">
                   {project.title}
