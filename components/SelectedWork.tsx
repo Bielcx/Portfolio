@@ -54,7 +54,7 @@ function BorderBeam({ delay = 0 }: { delay?: number }) {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 border border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)]"
+      className="pointer-events-none absolute inset-0 z-10 border border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)]"
     >
       <div
         className="absolute aspect-square w-24 bg-gradient-to-l from-[#b497cf] via-[#b497cf]/40 to-transparent light:from-[#8a6bab] light:via-[#8a6bab]/40"
