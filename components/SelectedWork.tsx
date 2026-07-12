@@ -49,7 +49,9 @@ const projects = [
 ];
 
 // ponytail: CSS-only take on magicui's BorderBeam (no motion/react needed) —
-// keyframe `border-beam` lives in globals.css.
+// a spinning conic-gradient masked to the 1px border ring; keyframe
+// `border-beam` lives in globals.css. GPU-composited (`rotate`), so it
+// glides through corners instead of stuttering like offset-path did.
 function BorderBeam({ delay = 0 }: { delay?: number }) {
   return (
     <div
@@ -57,11 +59,12 @@ function BorderBeam({ delay = 0 }: { delay?: number }) {
       className="pointer-events-none absolute inset-0 z-10 border border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)]"
     >
       <div
-        className="absolute aspect-square w-24 bg-gradient-to-l from-[#b497cf] via-[#b497cf]/40 to-transparent light:from-[#8a6bab] light:via-[#8a6bab]/40"
+        className="absolute left-1/2 top-1/2 aspect-square w-[250%] [translate:-50%_-50%] text-[#b497cf] light:text-[#8a6bab]"
         style={{
-          offsetPath: "rect(0 auto auto 0)",
-          animation: `border-beam 9s linear infinite`,
-          animationDelay: `${delay}s`,
+          background:
+            "conic-gradient(from 0deg, transparent 0deg 300deg, color-mix(in srgb, currentColor 40%, transparent) 335deg, currentColor 360deg)",
+          animation: "border-beam 7s linear infinite",
+          animationDelay: `${-delay}s`,
         }}
       />
     </div>

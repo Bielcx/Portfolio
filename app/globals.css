@@ -124,10 +124,11 @@
 
 }
 
-/* Border beam (magicui-style, CSS-only): a small gradient square travels the
-   card's border via offset-path; the parent mask clips it to the 1px ring. */
+/* Border beam (magicui-style, CSS-only): an oversized conic-gradient spins
+   behind a mask that only reveals the card's 1px border ring. `rotate` is
+   GPU-composited, unlike offset-distance (main thread, stuttered in dev). */
 @keyframes border-beam {
   to {
-    offset-distance: 100%;
+    rotate: 1turn;
   }
 }
