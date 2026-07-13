@@ -2,9 +2,11 @@
 // Drop <SelectedWork /> into page.tsx where the current #work section is.
 
 import { ArrowUpRight } from "@phosphor-icons/react/ssr";
-
-const shot = (url: string) =>
-  `https://api.microlink.io/?url=${url}&screenshot=true&meta=false&embed=screenshot.url`;
+import Image, { type StaticImageData } from "next/image";
+import skatehiveShot from "@/public/screenshots/skatehive.png";
+import fiveoutShot from "@/public/screenshots/fiveout.png";
+import miranteShot from "@/public/screenshots/mirante.png";
+import venturefiShot from "@/public/screenshots/venturefi.png";
 
 const projects = [
   {
@@ -19,7 +21,7 @@ const projects = [
     // the live microlink screenshot never renders. Using a pre-captured static
     // capture of /home instead — swap back to shot(href) if the checkpoint is
     // ever lifted.
-    screenshotSrc: "/skatehive-preview.png",
+    screenshot: skatehiveShot,
   },
   {
     title: "Fiveout Dashboard",
@@ -28,6 +30,7 @@ const projects = [
     stack: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Tailwind"],
     href: "https://www.fiveoout.com.br",
     repo: "https://github.com/Bielcx/fiveout-dashboard",
+    screenshot: fiveoutShot,
   },
   {
     title: "Mirante Skateshop",
@@ -36,6 +39,7 @@ const projects = [
     stack: ["React 19", "Three.js", "R3F", "Framer Motion", "Vite"],
     href: "https://mirante-skateshop.vercel.app",
     repo: "https://github.com/Bielcx/mirante-skateshop",
+    screenshot: miranteShot,
   },
   {
     title: "VentureFi",
@@ -44,7 +48,7 @@ const projects = [
     stack: ["Angular 20", "TypeScript", "Angular Material", "Chart.js"],
     href: "https://venturefi-gikn.vercel.app",
     repo: "https://github.com/Bielcx/VentureFi",
-    screenshotSrc: shot("https://venturefi-gikn.vercel.app/platform/dashboard"),
+    screenshot: venturefiShot,
   },
 ];
 
@@ -103,23 +107,23 @@ function CardLinks({ href, repo }: { href: string; repo: string }) {
 }
 
 function Screenshot({
-  href,
   title,
-  screenshotSrc,
+  screenshot,
   className = "",
 }: {
-  href: string;
   title: string;
-  screenshotSrc?: string;
+  screenshot: StaticImageData;
   className?: string;
 }) {
   return (
     <div className={`relative overflow-hidden bg-[#1a1a18] light:bg-neutral-100 ${className}`}>
-      <img
-        src={screenshotSrc ?? shot(href)}
+      <Image
+        src={screenshot}
         alt={`${title} — preview`}
-        loading="lazy"
-        className="absolute inset-0 h-full w-full object-cover object-top grayscale contrast-105 brightness-[.85] light:brightness-100 transition-[filter,transform] duration-500 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100 group-hover:scale-[1.03]"
+        fill
+        sizes="(max-width: 768px) 100vw, 480px"
+        placeholder="blur"
+        className="object-cover object-top grayscale contrast-105 brightness-[.85] light:brightness-100 transition-[filter,transform] duration-500 group-hover:grayscale-0 group-hover:contrast-100 group-hover:brightness-100 group-hover:scale-[1.03]"
       />
     </div>
   );
@@ -146,9 +150,8 @@ export default function SelectedWork() {
           >
             <BorderBeam delay={i * 2.25} />
             <Screenshot
-              href={project.href}
               title={project.title}
-              screenshotSrc={project.screenshotSrc}
+              screenshot={project.screenshot}
               className="aspect-video border-b border-[#948F85]/15 light:border-neutral-200"
             />
             <div className="flex flex-1 flex-col p-6">
