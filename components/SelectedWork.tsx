@@ -1,9 +1,17 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowUpRight, X } from "@phosphor-icons/react";
-import FaultyTerminal from "./FaultyTerminal";
+
+// ponytail: ogl (WebGL) is real weight — keep it out of the initial page
+// bundle entirely and only fetch it the first time a panel with a
+// terminalHeader actually opens. ssr:false because it touches the canvas/GL
+// APIs that don't exist on the server.
+const FaultyTerminal = dynamic(() => import("./FaultyTerminal"), {
+  ssr: false,
+});
 
 type PRStatus = "merged" | "open" | "closed";
 
@@ -11,6 +19,11 @@ type Contribution = {
   number: number;
   title: string;
   status: PRStatus;
+  // ponytail: only `featured` PRs render in the panel list — keeps it to the
+  // most representative work instead of all 20. The merged/open/closed counts
+  // above the list still reflect every PR in this array, not just featured
+  // ones, so the credential stays accurate even though the list is curated.
+  featured?: boolean;
 };
 
 type Project = {
@@ -37,25 +50,25 @@ type Project = {
 // ponytail: snapshot from github.com/SkateHive/skatehive3.0/pulls/Bielcx —
 // update manually as new PRs land.
 const skatehiveContributions: Contribution[] = [
-  { number: 189, title: "fix: profile-not-found flash on first load + SSR crashes on /user/[username]", status: "merged" },
-  { number: 171, title: "fix: false unread notification badge (Hive timestamps parsed as local time)", status: "merged" },
+  { number: 189, title: "fix: profile-not-found flash on first load + SSR crashes on /user/[username]", status: "merged", featured: true },
+  { number: 171, title: "fix: false unread notification badge (Hive timestamps parsed as local time)", status: "merged", featured: true },
   { number: 168, title: "[Fix] Video trim not applied on publish + UX improvements", status: "open" },
   { number: 165, title: "feat(homepage): redesign post action bar and reply composer footer", status: "open" },
   { number: 162, title: "fix: Skatehive logo broken on every page reload (external URL → local asset)", status: "merged" },
   { number: 160, title: "fix: /settings chunk error (useFormControlStyles) caused by optimizePackageImports", status: "merged" },
-  { number: 158, title: "fix: notifications unread badge clears on first click (race condition in markNotificationsAsRead)", status: "merged" },
-  { number: 156, title: "feat: /tricks redesign — tutorial embeds, clip previews, Skate or Dice & tag-collision fix", status: "merged" },
+  { number: 158, title: "fix: notifications unread badge clears on first click (race condition in markNotificationsAsRead)", status: "merged", featured: true },
+  { number: 156, title: "feat: /tricks redesign — tutorial embeds, clip previews, Skate or Dice & tag-collision fix", status: "merged", featured: true },
   { number: 154, title: "Add autosave draft support for Snap editor (Compose/Drafts tabs)", status: "open" },
-  { number: 150, title: "fix(#91): profile header data not loading on initial load + follow counter lag", status: "merged" },
-  { number: 135, title: "Add scheduled posts via Hive Posting Authority (closes #130)", status: "open" },
+  { number: 150, title: "fix(#91): profile header data not loading on initial load + follow counter lag", status: "merged", featured: true },
+  { number: 135, title: "Add scheduled posts via Hive Posting Authority (closes #130)", status: "open", featured: true },
   { number: 133, title: "fix: avatar fallback shown despite valid profile image", status: "merged" },
   { number: 129, title: "fix(#128): markdown preview shows raw syntax instead of rendered formatting", status: "merged" },
   { number: 126, title: "fix(#121): improve hashtag input placeholder for clarity", status: "closed" },
   { number: 111, title: "fix: open ConnectionModal instead of dead /sign-in route in settings", status: "merged" },
-  { number: 106, title: "fix(#97): recover from ChunkLoadError on skatehive.app home page", status: "merged" },
+  { number: 106, title: "fix(#97): recover from ChunkLoadError on skatehive.app home page", status: "merged", featured: true },
   { number: 103, title: "fix(#99): one-click bug reporting from error toasts", status: "merged" },
   { number: 102, title: "feat(homepage): add mobile-first SpotNearYou dialog", status: "closed" },
-  { number: 92, title: "feat(homepage): add SpotNearYou widget to right sidebar", status: "merged" },
+  { number: 92, title: "feat(homepage): add SpotNearYou widget to right sidebar", status: "merged", featured: true },
   { number: 88, title: "feat(i18n): add missing pt-BR translations", status: "merged" },
 ];
 
@@ -142,6 +155,7 @@ function ContributionsSection({ repo, items }: { repo: string; items: Contributi
   const merged = items.filter((p) => p.status === "merged").length;
   const open = items.filter((p) => p.status === "open").length;
   const closed = items.filter((p) => p.status === "closed").length;
+  const featured = items.filter((p) => p.featured);
 
   return (
     <div>
@@ -154,7 +168,7 @@ function ContributionsSection({ repo, items }: { repo: string; items: Contributi
         </span>
       </div>
       <div className="divide-y divide-[#948F85]/10 light:divide-neutral-200 border border-[#948F85]/15 light:border-neutral-200">
-        {items.map((pr) => (
+        {featured.map((pr) => (
           <a
             key={pr.number}
             href={`${repo}/pull/${pr.number}`}
@@ -176,6 +190,14 @@ function ContributionsSection({ repo, items }: { repo: string; items: Contributi
           </a>
         ))}
       </div>
+      <a
+        href={`${repo}/pulls/Bielcx`}
+        target="_blank"
+        rel="noreferrer"
+        className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] text-[#948F85]/60 light:text-neutral-400 hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
+      >
+        Ver todas as {items.length} PRs no GitHub <ArrowUpRight className="size-3" weight="bold" />
+      </a>
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   LinkedinLogo,
 } from "@phosphor-icons/react";
 import { IconCloud } from "@/components/IconCloud";
+import { LineShadowText } from "@/components/LineShadowText";
 
 type Profile = {
   name: string;
@@ -91,7 +92,9 @@ export default function HeroSection({ profile }: { profile: Profile }) {
           >
             Gabriel
             <br />
-            Cavalcanti
+            <LineShadowText shadowColor="#b497cf" delay={0.5}>
+              Cavalcanti
+            </LineShadowText>
           </motion.h1>
 
           <motion.p

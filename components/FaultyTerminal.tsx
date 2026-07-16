@@ -1,7 +1,7 @@
 "use client";
 
 import { Renderer, Program, Mesh, Color, Triangle } from "ogl";
-import React, { useEffect, useRef, useMemo, useCallback } from "react";
+import React, { useEffect, useRef, useMemo } from "react";
 import "./FaultyTerminal.css";
 
 type Vec2 = [number, number];
@@ -261,16 +261,20 @@ export default function FaultyTerminal({
     () => (typeof dither === "boolean" ? (dither ? 1 : 0) : dither),
     [dither]
   );
+  const [gridMulX, gridMulY] = gridMul;
 
-  const handleMouseMove = useCallback((e: MouseEvent) => {
-    const ctn = containerRef.current;
-    if (!ctn) return;
-    const rect = ctn.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = 1 - (e.clientY - rect.top) / rect.height;
-    mouseRef.current = { x, y };
-  }, []);
+  // ponytail: values the rAF loop needs every frame but that shouldn't force
+  // a full WebGL context teardown/rebuild when they change (pause toggling,
+  // mouse interaction settings). Plain refs updated on every render — cheap,
+  // no extra effect indirection, and always current inside the rAF closure.
+  const liveRef = useRef({ pause, timeScale, mouseReact, mouseStrength, pageLoadAnimation });
+  liveRef.current = { pause, timeScale, mouseReact, mouseStrength, pageLoadAnimation };
 
+  // MOUNT EFFECT — creates the GL context, compiles the shader, starts the
+  // render loop. Runs once per component lifetime (only `dpr` can restart
+  // it, and that prop is effectively static in practice). Everything else
+  // that can change per-project (tint, scale, digitSize, ...) is synced via
+  // the lightweight uniform-update effect below instead of re-running this.
   useEffect(() => {
     const ctn = containerRef.current;
     if (!ctn) return;
@@ -295,7 +299,7 @@ export default function FaultyTerminal({
           ),
         },
         uScale: { value: scale },
-        uGridMul: { value: new Float32Array(gridMul) },
+        uGridMul: { value: new Float32Array([gridMulX, gridMulY]) },
         uDigitSize: { value: digitSize },
         uScanlineIntensity: { value: scanlineIntensity },
         uGlitchAmount: { value: glitchAmount },
@@ -335,29 +339,38 @@ export default function FaultyTerminal({
     resizeObserver.observe(ctn);
     resize();
 
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = ctn.getBoundingClientRect();
+      mouseRef.current = {
+        x: (e.clientX - rect.left) / rect.width,
+        y: 1 - (e.clientY - rect.top) / rect.height,
+      };
+    };
+
     const update = (t: number) => {
       rafRef.current = requestAnimationFrame(update);
+      const live = liveRef.current;
 
-      if (pageLoadAnimation && loadAnimationStartRef.current === 0) {
+      if (live.pageLoadAnimation && loadAnimationStartRef.current === 0) {
         loadAnimationStartRef.current = t;
       }
 
-      if (!pause) {
-        const elapsed = (t * 0.001 + timeOffsetRef.current) * timeScale;
+      if (!live.pause) {
+        const elapsed = (t * 0.001 + timeOffsetRef.current) * live.timeScale;
         program.uniforms.iTime.value = elapsed;
         frozenTimeRef.current = elapsed;
       } else {
         program.uniforms.iTime.value = frozenTimeRef.current;
       }
 
-      if (pageLoadAnimation && loadAnimationStartRef.current > 0) {
+      if (live.pageLoadAnimation && loadAnimationStartRef.current > 0) {
         const animationDuration = 2000;
         const animationElapsed = t - loadAnimationStartRef.current;
         const progress = Math.min(animationElapsed / animationDuration, 1);
         program.uniforms.uPageLoadProgress.value = progress;
       }
 
-      if (mouseReact) {
+      if (live.mouseReact) {
         const dampingFactor = 0.08;
         const smoothMouse = smoothMouseRef.current;
         const mouse = mouseRef.current;
@@ -373,23 +386,45 @@ export default function FaultyTerminal({
     rafRef.current = requestAnimationFrame(update);
 
     ctn.appendChild(gl.canvas);
-    if (mouseReact) ctn.addEventListener("mousemove", handleMouseMove);
+    ctn.addEventListener("mousemove", handleMouseMove);
 
     return () => {
       cancelAnimationFrame(rafRef.current);
       resizeObserver.disconnect();
-      if (mouseReact) ctn.removeEventListener("mousemove", handleMouseMove);
+      ctn.removeEventListener("mousemove", handleMouseMove);
       if (gl.canvas.parentElement === ctn) ctn.removeChild(gl.canvas);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
       loadAnimationStartRef.current = 0;
       timeOffsetRef.current = Math.random() * 100;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dpr]);
+
+  // UPDATE EFFECT — syncs uniforms whenever a visual prop changes, without
+  // touching the WebGL context or recompiling the shader. This is what makes
+  // switching between projects (different tint, scale, etc.) instant instead
+  // of paying a full context-teardown + shader-compile cost on every click.
+  useEffect(() => {
+    const program = programRef.current;
+    if (!program) return;
+    program.uniforms.uScale.value = scale;
+    (program.uniforms.uGridMul.value as Float32Array).set([gridMulX, gridMulY]);
+    program.uniforms.uDigitSize.value = digitSize;
+    program.uniforms.uScanlineIntensity.value = scanlineIntensity;
+    program.uniforms.uGlitchAmount.value = glitchAmount;
+    program.uniforms.uFlickerAmount.value = flickerAmount;
+    program.uniforms.uNoiseAmp.value = noiseAmp;
+    program.uniforms.uChromaticAberration.value = chromaticAberration;
+    program.uniforms.uDither.value = ditherValue;
+    program.uniforms.uCurvature.value = curvature;
+    program.uniforms.uTint.value = new Color(tintVec[0], tintVec[1], tintVec[2]);
+    program.uniforms.uMouseStrength.value = mouseStrength;
+    program.uniforms.uUseMouse.value = mouseReact ? 1 : 0;
+    program.uniforms.uBrightness.value = brightness;
   }, [
-    dpr,
-    pause,
-    timeScale,
     scale,
-    gridMul,
+    gridMulX,
+    gridMulY,
     digitSize,
     scanlineIntensity,
     glitchAmount,
@@ -399,11 +434,9 @@ export default function FaultyTerminal({
     ditherValue,
     curvature,
     tintVec,
-    mouseReact,
     mouseStrength,
-    pageLoadAnimation,
+    mouseReact,
     brightness,
-    handleMouseMove,
   ]);
 
   return (
