@@ -22,10 +22,13 @@ type Project = {
   href: string;
   repo: string;
   screenshotSrc: string;
-  // ponytail: opt-in flag for the FaultyTerminal WebGL header — SkateHive is
-  // the design pilot for this treatment. Once finalized, flip this on for
-  // the other projects too.
+  // ponytail: opt-in flag for the FaultyTerminal WebGL header — SkateHive was
+  // the design pilot, now replicated across all projects (see issue #3).
   terminalHeader?: boolean;
+  // ponytail: per-project tint for the terminal header. SkateHive's #4ade80
+  // (matrix green) is final; the rest are TEMP placeholders on the portfolio
+  // accent color until Gabriel picks final colors per project.
+  terminalTint?: string;
   // ponytail: SkateHive-only — open source contribution history. Other
   // projects don't have a PR trail so this stays undefined for them.
   contributions?: Contribution[];
@@ -68,6 +71,7 @@ const projects: Project[] = [
     repo: "https://github.com/SkateHive/skatehive3.0",
     screenshotSrc: "/skatehive-preview.png",
     terminalHeader: true,
+    terminalTint: "#4ade80",
     contributions: skatehiveContributions,
   },
   {
@@ -80,6 +84,7 @@ const projects: Project[] = [
     href: "https://www.fiveoout.com.br",
     repo: "https://github.com/Bielcx/fiveout-dashboard",
     screenshotSrc: "/fiveout.png",
+    terminalHeader: true,
   },
   {
     slug: "mirante",
@@ -91,17 +96,31 @@ const projects: Project[] = [
     href: "https://mirante-skateshop.vercel.app",
     repo: "https://github.com/Bielcx/mirante-skateshop",
     screenshotSrc: "/mirante.png",
+    terminalHeader: true,
   },
   {
-    slug: "venturefi",
-    title: "VentureFi",
-    year: "2025",
+    slug: "voha",
+    title: "Voha",
+    year: "2026",
     description:
-      "TCC em Sistemas de Informação (FIAP) — plataforma SaaS fullstack de gestão financeira, com sugestões inteligentes de investimento e relatórios interativos.",
-    stack: ["Angular 20", "TypeScript", "Angular Material", "Chart.js"],
-    href: "https://venturefi-gikn.vercel.app",
-    repo: "https://github.com/Bielcx/VentureFi",
-    screenshotSrc: "/venturefi.png",
+      "Plataforma mobile-first de planejamento, aprovação e agendamento de conteúdo para Instagram — calendário editorial, fluxo de aprovação por cliente e biblioteca de mídia. Fundação de backend pronta (Supabase + Cloudflare R2); frontend em desenvolvimento, ainda com dados fictícios.",
+    stack: ["Next.js", "TypeScript", "Supabase", "Cloudflare R2", "PostgreSQL"],
+    href: "https://voha-lab.vercel.app",
+    repo: "https://github.com/Bielcx/voha-lab",
+    screenshotSrc: "/voha.png",
+    terminalHeader: true,
+  },
+  {
+    slug: "jcm",
+    title: "JCM Soluções Gráficas",
+    year: "2026",
+    description:
+      "Catálogo digital para gráfica de embalagens — carrinho e finalização de pedido direto pelo WhatsApp, sem backend nem plataforma mensal. Projeto real para cliente, site estático hospedado na Cloudflare.",
+    stack: ["Astro", "TypeScript", "Tailwind CSS", "Cloudflare Pages"],
+    href: "https://jcm-solucoes-graficas.biel-cavalcanti1.workers.dev/",
+    repo: "https://github.com/Bielcx/jcm-solucoes-graficas",
+    screenshotSrc: "/jcm.png",
+    terminalHeader: true,
   },
 ];
 
@@ -271,7 +290,7 @@ export default function SelectedWork() {
                     noiseAmp={1}
                     chromaticAberration={0}
                     curvature={0}
-                    tint="#4ade80"
+                    tint={active.terminalTint ?? "#b497cf"}
                     mouseReact
                     mouseStrength={0.4}
                     pageLoadAnimation
@@ -279,7 +298,10 @@ export default function SelectedWork() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#141413] via-transparent to-[#141413]/40" />
                   <div className="absolute inset-x-0 bottom-0 px-8 pb-6">
-                    <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#4ade80]">
+                    <span
+                      className="font-mono text-xs uppercase tracking-[0.2em]"
+                      style={{ color: active.terminalTint ?? "#b497cf" }}
+                    >
                       Project
                     </span>
                     <h2 className="text-2xl font-bold tracking-tight text-[#F3E6C4] mt-1">
