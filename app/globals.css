@@ -130,6 +130,20 @@
     background-repeat: repeat;
   }
 
+  /* Hero "Available for work" dot — Tailwind's animate-pulse is too sharp/
+     fast for this; the design handoff calls for a slower, softer breathe. */
+  .pulse-dot {
+    animation: pulse-dot 2.4s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.35;
+    }
+  }
 }
 
 /* Border beam (magicui-style, CSS-only): an oversized conic-gradient spins
