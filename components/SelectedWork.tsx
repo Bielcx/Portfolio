@@ -107,7 +107,7 @@ const projects: Project[] = [
     stack: ["Next.js", "TypeScript", "Supabase", "Cloudflare R2", "PostgreSQL"],
     href: "https://voha-lab.vercel.app",
     repo: "https://github.com/Bielcx/voha-lab",
-    screenshotSrc: "/voha.png",
+    screenshotSrc: "/screenshots/voha.png",
     terminalHeader: true,
   },
   {
@@ -119,7 +119,7 @@ const projects: Project[] = [
     stack: ["Astro", "TypeScript", "Tailwind CSS", "Cloudflare Pages"],
     href: "https://jcm-solucoes-graficas.biel-cavalcanti1.workers.dev/",
     repo: "https://github.com/Bielcx/jcm-solucoes-graficas",
-    screenshotSrc: "/jcm.png",
+    screenshotSrc: "/screenshots/jcm.png",
     terminalHeader: true,
   },
 ];
