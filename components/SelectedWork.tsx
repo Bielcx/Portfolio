@@ -82,7 +82,7 @@ const projects: Project[] = [
     stack: ["Next.js", "TypeScript", "Web3", "Hive Blockchain"],
     href: "https://skatehive.app",
     repo: "https://github.com/SkateHive/skatehive3.0",
-    screenshotSrc: "/skatehive-preview.png",
+    screenshotSrc: "/screenshots/skatehive.png",
     terminalHeader: true,
     terminalTint: "#4ade80",
     contributions: skatehiveContributions,
@@ -96,7 +96,7 @@ const projects: Project[] = [
     stack: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Tailwind"],
     href: "https://www.fiveoout.com.br",
     repo: "https://github.com/Bielcx/fiveout-dashboard",
-    screenshotSrc: "/fiveout.png",
+    screenshotSrc: "/screenshots/fiveout.png",
     terminalHeader: true,
   },
   {
@@ -108,7 +108,7 @@ const projects: Project[] = [
     stack: ["React 19", "Three.js", "R3F", "Framer Motion", "Vite"],
     href: "https://mirante-skateshop.vercel.app",
     repo: "https://github.com/Bielcx/mirante-skateshop",
-    screenshotSrc: "/mirante.png",
+    screenshotSrc: "/screenshots/mirante.png",
     terminalHeader: true,
   },
   {
