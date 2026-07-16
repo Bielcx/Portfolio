@@ -112,6 +112,14 @@
     background: #b497cf;
     color: #08070b;
   }
+
+  /* Visible keyboard focus ring — nothing beyond the shadcn ring default
+     was defined before, so Tab navigation had no reliable indicator on the
+     dark background. */
+  :focus-visible {
+    outline: 2px solid #b497cf;
+    outline-offset: 2px;
+  }
 }
 
 @layer utilities {

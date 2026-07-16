@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
 import { ArrowUpRight, X } from "@phosphor-icons/react";
@@ -12,6 +12,8 @@ import { ArrowUpRight, X } from "@phosphor-icons/react";
 const FaultyTerminal = dynamic(() => import("./FaultyTerminal"), {
   ssr: false,
 });
+
+const PANEL_TITLE_ID = "selected-work-panel-title";
 
 type PRStatus = "merged" | "open" | "closed";
 
@@ -35,6 +37,15 @@ type Project = {
   href: string;
   repo: string;
   screenshotSrc: string;
+  // ponytail: one-line result/nature phrase shown in the list row instead of
+  // a stack preview — "Next.js TypeScript Supabase" repeated across projects
+  // was noise, not differentiation. Full stack is still in the panel below.
+  outcome: string;
+  // ponytail: short highlight tag next to the outcome (e.g. "Open Source").
+  badge?: string;
+  // ponytail: marks a project still in progress (mock data, no real backend
+  // yet) so it doesn't read as equivalent to the finished, real-client work.
+  wip?: boolean;
   // ponytail: opt-in flag for the FaultyTerminal WebGL header — SkateHive was
   // the design pilot, now replicated across all projects (see issue #3).
   terminalHeader?: boolean;
@@ -80,6 +91,8 @@ const projects: Project[] = [
     description:
       "Plataforma Web3 de skateboarding — rede social descentralizada com criação de conteúdo, curadoria de vídeos e recompensas em crypto. Blockchain Hive.",
     stack: ["Next.js", "TypeScript", "Web3", "Hive Blockchain"],
+    outcome: "14 PRs em produção",
+    badge: "Open Source",
     href: "https://skatehive.app",
     repo: "https://github.com/SkateHive/skatehive3.0",
     screenshotSrc: "/screenshots/skatehive.png",
@@ -94,6 +107,7 @@ const projects: Project[] = [
     description:
       "Painel fullstack para loja de streetwear — cadastro de peças, controle de estoque em tempo real e catálogo público com integração no WhatsApp. Auth SSR com Supabase.",
     stack: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Tailwind"],
+    outcome: "Estoque em tempo real · loja real",
     href: "https://www.fiveoout.com.br",
     repo: "https://github.com/Bielcx/fiveout-dashboard",
     screenshotSrc: "/screenshots/fiveout.png",
@@ -106,6 +120,7 @@ const projects: Project[] = [
     description:
       "Landing page demo para skateshop real — modelo 3D interativo de skate com parallax de mouse, animações scroll-triggered e estética street culture.",
     stack: ["React 19", "Three.js", "R3F", "Framer Motion", "Vite"],
+    outcome: "3D interativo · parallax real",
     href: "https://mirante-skateshop.vercel.app",
     repo: "https://github.com/Bielcx/mirante-skateshop",
     screenshotSrc: "/screenshots/mirante.png",
@@ -118,6 +133,8 @@ const projects: Project[] = [
     description:
       "Plataforma mobile-first de planejamento, aprovação e agendamento de conteúdo para Instagram — calendário editorial, fluxo de aprovação por cliente e biblioteca de mídia. Fundação de backend pronta (Supabase + Cloudflare R2); frontend em desenvolvimento, ainda com dados fictícios.",
     stack: ["Next.js", "TypeScript", "Supabase", "Cloudflare R2", "PostgreSQL"],
+    outcome: "Calendário editorial p/ Instagram",
+    wip: true,
     href: "https://voha-lab.vercel.app",
     repo: "https://github.com/Bielcx/voha-lab",
     screenshotSrc: "/screenshots/voha.png",
@@ -130,6 +147,7 @@ const projects: Project[] = [
     description:
       "Catálogo digital para gráfica de embalagens — carrinho e finalização de pedido direto pelo WhatsApp, sem backend nem plataforma mensal. Projeto real para cliente, site estático hospedado na Cloudflare.",
     stack: ["Astro", "TypeScript", "Tailwind CSS", "Cloudflare Pages"],
+    outcome: "Checkout via WhatsApp · sem backend",
     href: "https://jcm-solucoes-graficas.biel-cavalcanti1.workers.dev/",
     repo: "https://github.com/Bielcx/jcm-solucoes-graficas",
     screenshotSrc: "/screenshots/jcm.png",
@@ -163,7 +181,7 @@ function ContributionsSection({ repo, items }: { repo: string; items: Contributi
         <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#4ade80]">
           Contributions
         </span>
-        <span className="font-mono text-[11px] text-[#948F85]/50 light:text-neutral-400">
+        <span className="font-mono text-[11px] text-[#948F85]/75 light:text-neutral-500">
           {merged} merged · {open} open · {closed} closed
         </span>
       </div>
@@ -176,7 +194,7 @@ function ContributionsSection({ repo, items }: { repo: string; items: Contributi
             rel="noreferrer"
             className="group flex items-start gap-3 px-4 py-3 hover:bg-[#F3E6C4]/[0.03] light:hover:bg-neutral-900/[0.03] transition-colors"
           >
-            <span className="font-mono text-[11px] text-[#948F85]/40 light:text-neutral-300 shrink-0 mt-0.5">
+            <span className="font-mono text-[11px] text-[#948F85]/75 light:text-neutral-500 shrink-0 mt-0.5">
               #{pr.number}
             </span>
             <span className="flex-1 text-[13px] leading-snug text-[#948F85] light:text-neutral-600 group-hover:text-[#F3E6C4] light:group-hover:text-neutral-900 transition-colors">
@@ -194,7 +212,7 @@ function ContributionsSection({ repo, items }: { repo: string; items: Contributi
         href={`${repo}/pulls/Bielcx`}
         target="_blank"
         rel="noreferrer"
-        className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] text-[#948F85]/60 light:text-neutral-400 hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
+        className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] text-[#948F85]/75 light:text-neutral-500 hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
       >
         Ver todas as {items.length} PRs no GitHub <ArrowUpRight className="size-3" weight="bold" />
       </a>
@@ -204,22 +222,70 @@ function ContributionsSection({ repo, items }: { repo: string; items: Contributi
 
 export default function SelectedWork() {
   const [active, setActive] = useState<Project | null>(null);
+  const panelRef = useRef<HTMLElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
+
+  const openProject = useCallback(
+    (project: Project, trigger: HTMLElement) => {
+      triggerRef.current = trigger;
+      setActive(project);
+    },
+    []
+  );
 
   const close = useCallback(() => setActive(null), []);
 
+  // Esc closes; Tab is trapped inside the panel while it's open (basic focus
+  // trap — dialog semantics without pulling in a whole a11y library).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
+      if (!active) return;
+
+      if (e.key === "Escape") {
+        close();
+        return;
+      }
+
+      if (e.key === "Tab" && panelRef.current) {
+        const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const list = Array.from(focusable);
+        const first = list[0];
+        const last = list[list.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [close]);
+  }, [active, close]);
 
   useEffect(() => {
     document.body.style.overflow = active ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
+  }, [active]);
+
+  // Move focus into the panel on open, return it to the row that opened it
+  // on close — keyboard users never lose their place.
+  useEffect(() => {
+    if (active) {
+      const raf = requestAnimationFrame(() => closeButtonRef.current?.focus());
+      return () => cancelAnimationFrame(raf);
+    }
+    if (triggerRef.current) {
+      triggerRef.current.focus();
+      triggerRef.current = null;
+    }
   }, [active]);
 
   return (
@@ -229,7 +295,7 @@ export default function SelectedWork() {
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-[#b497cf] light:text-[#8a6bab]">
             Selected Work
           </p>
-          <p className="font-mono text-xs text-[#948F85]/50 light:text-neutral-400">
+          <p className="font-mono text-xs text-[#948F85]/75 light:text-neutral-500">
             0{projects.length} — projects
           </p>
         </div>
@@ -238,26 +304,31 @@ export default function SelectedWork() {
           {projects.map((project, i) => (
             <button
               key={project.slug}
-              onClick={() => setActive(project)}
+              onClick={(e) => openProject(project, e.currentTarget)}
               className="group w-full flex items-center gap-6 py-6 text-left transition-colors hover:bg-[#F3E6C4]/[0.025] light:hover:bg-neutral-900/[0.03] -mx-4 px-4"
             >
-              <span className="font-mono text-[11px] text-[#948F85]/40 light:text-neutral-300 shrink-0 w-5">
+              <span className="font-mono text-[11px] text-[#948F85]/75 light:text-neutral-500 shrink-0 w-5">
                 0{i + 1}
               </span>
               <span className="flex-1 text-base font-semibold tracking-tight text-[#F3E6C4] light:text-neutral-900 group-hover:text-[#b497cf] light:group-hover:text-[#8a6bab] transition-colors">
                 {project.title}
               </span>
-              <span className="hidden md:flex items-center gap-3 flex-1">
-                {project.stack.slice(0, 3).map((t) => (
-                  <span
-                    key={t}
-                    className="font-mono text-[11px] text-[#948F85]/50 light:text-neutral-400"
-                  >
-                    {t}
+              <span className="hidden md:flex items-center gap-2 flex-1 min-w-0">
+                <span className="truncate text-[13px] text-[#948F85] light:text-neutral-600">
+                  {project.outcome}
+                </span>
+                {project.badge && (
+                  <span className="shrink-0 whitespace-nowrap font-mono text-[10px] uppercase tracking-wide border border-[#4ade80]/30 text-[#4ade80] px-1.5 py-0.5">
+                    {project.badge}
                   </span>
-                ))}
+                )}
+                {project.wip && (
+                  <span className="shrink-0 whitespace-nowrap font-mono text-[10px] uppercase tracking-wide border border-[#948F85]/30 text-[#948F85]/90 light:text-neutral-500 px-1.5 py-0.5">
+                    Em desenvolvimento
+                  </span>
+                )}
               </span>
-              <span className="font-mono text-[11px] text-[#948F85]/40 light:text-neutral-300 shrink-0">
+              <span className="font-mono text-[11px] text-[#948F85]/75 light:text-neutral-500 shrink-0">
                 {project.year}
               </span>
               <ArrowUpRight
@@ -283,7 +354,11 @@ export default function SelectedWork() {
             />
 
             <motion.aside
+              ref={panelRef}
               key="panel"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby={PANEL_TITLE_ID}
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
@@ -291,9 +366,10 @@ export default function SelectedWork() {
               className="fixed right-0 top-0 z-50 h-full w-full md:w-[48vw] md:min-w-[560px] bg-[#141413] light:bg-[#fafafa] border-l border-[#948F85]/15 light:border-neutral-200 overflow-y-auto"
             >
               <button
+                ref={closeButtonRef}
                 onClick={close}
-                aria-label="Close"
-                className="fixed md:absolute top-6 right-6 z-20 text-[#F3E6C4]/80 hover:text-[#F3E6C4] mix-blend-difference transition-colors"
+                aria-label="Fechar"
+                className="fixed md:absolute top-4 right-4 z-20 flex h-11 w-11 items-center justify-center bg-black/30 light:bg-white/50 backdrop-blur-sm text-[#F3E6C4] light:text-neutral-900 hover:text-[#b497cf] transition-colors"
               >
                 <X className="size-5" weight="bold" />
               </button>
@@ -326,7 +402,7 @@ export default function SelectedWork() {
                     >
                       Project
                     </span>
-                    <h2 className="text-2xl font-bold tracking-tight text-[#F3E6C4] mt-1">
+                    <h2 id={PANEL_TITLE_ID} className="text-2xl font-bold tracking-tight text-[#F3E6C4] mt-1">
                       {active.title}
                     </h2>
                   </div>
@@ -340,9 +416,31 @@ export default function SelectedWork() {
               )}
 
               <div className="px-8 py-8 flex flex-col gap-8">
+                {/* Live/Source — the primary "prove it's real" action, moved
+                    up from the bottom of the panel so it's not hidden below
+                    the fold on shorter screens. */}
+                <div className="flex gap-6 font-mono text-[11px] uppercase tracking-[0.08em]">
+                  <a
+                    href={active.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1 text-[#b497cf] light:text-[#8a6bab] hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
+                  >
+                    Live <ArrowUpRight className="size-3" weight="bold" />
+                  </a>
+                  <a
+                    href={active.repo}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-1 text-[#948F85]/70 light:text-neutral-400 hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
+                  >
+                    Source <ArrowUpRight className="size-3" weight="bold" />
+                  </a>
+                </div>
+
                 <div>
                   {!active.terminalHeader && (
-                    <h2 className="text-2xl font-bold tracking-tight text-[#F3E6C4] light:text-neutral-900 mb-3">
+                    <h2 id={PANEL_TITLE_ID} className="text-2xl font-bold tracking-tight text-[#F3E6C4] light:text-neutral-900 mb-3">
                       {active.title}
                     </h2>
                   )}
@@ -368,25 +466,6 @@ export default function SelectedWork() {
                 {active.contributions && (
                   <ContributionsSection repo={active.repo} items={active.contributions} />
                 )}
-
-                <div className="flex gap-6 font-mono text-[11px] uppercase tracking-[0.08em]">
-                  <a
-                    href={active.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-1 text-[#b497cf] light:text-[#8a6bab] hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
-                  >
-                    Live <ArrowUpRight className="size-3" weight="bold" />
-                  </a>
-                  <a
-                    href={active.repo}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-1 text-[#948F85]/70 light:text-neutral-400 hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
-                  >
-                    Source <ArrowUpRight className="size-3" weight="bold" />
-                  </a>
-                </div>
               </div>
             </motion.aside>
           </>
