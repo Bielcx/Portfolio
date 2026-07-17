@@ -144,6 +144,19 @@
       opacity: 0.35;
     }
   }
+
+  /* Contact section's terminal-cursor blink, referenced via Tailwind's
+     arbitrary animate-[blink_...] utility in app/page.tsx. */
+  @keyframes blink {
+    0%,
+    49% {
+      opacity: 1;
+    }
+    50%,
+    100% {
+      opacity: 0;
+    }
+  }
 }
 
 /* Border beam (magicui-style, CSS-only): an oversized conic-gradient spins

@@ -9,7 +9,7 @@ import { ArrowUpRight, X } from "@phosphor-icons/react";
 // bundle entirely and only fetch it the first time a panel with a
 // terminalHeader actually opens. ssr:false because it touches the canvas/GL
 // APIs that don't exist on the server.
-const FaultyTerminal = dynamic(() => import("./FaultyTerminal"), {
+const Galaxy = dynamic(() => import("./Galaxy"), {
   ssr: false,
 });
 
@@ -44,12 +44,13 @@ type Project = {
   // ponytail: marks a project still in progress (mock data, no real backend
   // yet) so it doesn't read as equivalent to the finished, real-client work.
   wip?: boolean;
-  // ponytail: opt-in flag for the FaultyTerminal WebGL header — SkateHive was
-  // the design pilot, now replicated across all projects (see issue #3).
+  // ponytail: opt-in flag for the WebGL panel header (Galaxy, testing —
+  // was FaultyTerminal) — SkateHive was the design pilot, now replicated
+  // across all projects (see issue #3).
   terminalHeader?: boolean;
-  // ponytail: per-project tint for the terminal header. SkateHive's #4ade80
-  // (matrix green) is final; the rest are TEMP placeholders on the portfolio
-  // accent color until Gabriel picks final colors per project.
+  // ponytail: unused while the header renders Galaxy (which is hardcoded to
+  // the site accent, see SelectedWork's render). Kept on the data model in
+  // case per-project tinting comes back.
   terminalTint?: string;
   // ponytail: SkateHive-only — open source contribution history. Other
   // projects don't have a PR trail so this stays undefined for them.
@@ -379,26 +380,30 @@ export default function SelectedWork() {
 
               {active.terminalHeader ? (
                 <div className="relative h-56 w-full overflow-hidden border-b border-[#948F85]/15 light:border-neutral-200">
-                  <FaultyTerminal
+                  <Galaxy
                     className="absolute inset-0"
-                    scale={1.8}
-                    gridMul={[2, 1]}
-                    digitSize={1.1}
-                    timeScale={0.4}
-                    scanlineIntensity={0.4}
-                    glitchAmount={1}
-                    flickerAmount={0.6}
-                    noiseAmp={1}
-                    chromaticAberration={0}
-                    curvature={0}
-                    tint={active.terminalTint ?? "#b497cf"}
-                    mouseReact
-                    mouseStrength={0.4}
-                    pageLoadAnimation
-                    brightness={0.6}
+                    color="#b497cf"
+                    tintStrength={1}
+                    density={1}
+                    glowIntensity={0.3}
+                    saturation={0}
+                    hueShift={140}
+                    twinkleIntensity={0.3}
+                    rotationSpeed={0.1}
+                    repulsionStrength={2}
+                    autoCenterRepulsion={0}
+                    starSpeed={0.5}
+                    speed={1}
+                    mouseInteraction
+                    mouseRepulsion
+                    transparent
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#141413] via-transparent to-[#141413]/40" />
-                  <div className="absolute inset-x-0 bottom-0 px-8 pb-6">
+                  {/* pointer-events-none — these sit on top of the Galaxy
+                      canvas purely for the gradient/title legibility, and
+                      would otherwise swallow the mousemove events Galaxy
+                      needs for its hover repulsion effect. */}
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#141413] via-transparent to-[#141413]/40" />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 px-8 pb-6">
                     <span
                       className="font-mono text-xs uppercase tracking-[0.2em]"
                       style={{ color: active.terminalTint ?? "#b497cf" }}

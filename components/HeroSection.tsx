@@ -143,6 +143,10 @@ export default function HeroSection({ profile }: { profile: Profile }) {
                 rippleSpeed={0.4}
                 rippleThickness={0.12}
                 rippleIntensityScale={1.5}
+                liquid
+                liquidStrength={0.12}
+                liquidRadius={1.2}
+                liquidWobbleSpeed={5}
                 edgeFade={0.25}
                 transparent
               />
