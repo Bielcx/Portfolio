@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowUpRight, X } from "@phosphor-icons/react";
+import { ArrowUpRight, ArrowsOut, X } from "@phosphor-icons/react";
 
 // ponytail: ogl (WebGL) is real weight — keep it out of the initial page
 // bundle entirely and only fetch it the first time a panel with a
@@ -35,12 +35,21 @@ type Project = {
   href: string;
   repo: string;
   screenshotSrc: string;
+  // ponytail: Voha's screenshot is a wide split-screen (brand panel + login
+  // card) — squeezing it into the shared 16:9 box with object-cover always
+  // crops off the logo or the card, no matter how the source is pre-cropped.
+  // "contain" shows the whole image letterboxed instead; every other project
+  // is pre-cropped to exactly 16:9 so "cover" is effectively a no-op there.
+  screenshotFit?: "cover" | "contain";
   // ponytail: one-line result/nature phrase shown in the list row instead of
   // a stack preview — "Next.js TypeScript Supabase" repeated across projects
   // was noise, not differentiation. Full stack is still in the panel below.
   outcome: string;
   // ponytail: short highlight tag next to the outcome (e.g. "Open Source").
   badge?: string;
+  // ponytail: shorter version of `badge` for the list row itself (redesign
+  // 2a) — the full text only shows in the hover-revealed detail line below.
+  badgeShort?: string;
   // ponytail: marks a project still in progress (mock data, no real backend
   // yet) so it doesn't read as equivalent to the finished, real-client work.
   wip?: boolean;
@@ -55,6 +64,10 @@ type Project = {
   // ponytail: SkateHive-only — open source contribution history. Other
   // projects don't have a PR trail so this stays undefined for them.
   contributions?: Contribution[];
+  // ponytail: authoritative merged/open/closed/total counts for the
+  // Contributions summary line — overrides counting `contributions` directly,
+  // since that array is a curated highlight subset, not the full PR history.
+  contributionStats?: { merged: number; open: number; closed: number; total: number };
 };
 
 // ponytail: snapshot from github.com/SkateHive/skatehive3.0/pulls/Bielcx —
@@ -82,6 +95,20 @@ const skatehiveContributions: Contribution[] = [
   { number: 88, title: "feat(i18n): add missing pt-BR translations", status: "merged" },
 ];
 
+// ponytail: NOT derived from the array above — that array is only the
+// curated *featured* subset shown in the panel (20 entries, hand-picked),
+// so filtering/counting it undercounts the real total (proved wrong twice:
+// first hardcoded "14", then a derived count that was still only 14/20
+// because the array itself was stale). These numbers were checked directly
+// against GitHub's search API on 2026-07-21:
+//   is:pr author:Bielcx repo:SkateHive/skatehive3.0             → 25 total
+//   is:pr is:merged author:Bielcx repo:SkateHive/skatehive3.0   → 20 merged
+//   is:pr is:open author:Bielcx repo:SkateHive/skatehive3.0     → 3 open
+//   is:pr is:unmerged is:closed author:Bielcx repo:...          → 2 closed
+// Re-run those queries to refresh when this drifts again — don't try to
+// derive it from the curated array, that's what caused the drift.
+const skatehiveStats = { merged: 20, open: 3, closed: 2, total: 25 };
+
 const projects: Project[] = [
   {
     slug: "skatehive",
@@ -90,9 +117,10 @@ const projects: Project[] = [
     description:
       "Plataforma Web3 de skateboarding — rede social descentralizada com criação de conteúdo, curadoria de vídeos e recompensas em crypto. Blockchain Hive.",
     stack: ["Next.js", "TypeScript", "Web3", "Hive Blockchain"],
-    outcome:
-      "Contribuidor ativo em plataforma Web3 de skate em produção — 20 PRs entre fixes de SSR, race conditions e features de homepage.",
-    badge: "14 PRs merged · open source",
+    outcome: `Contribuidor ativo em plataforma Web3 de skate em produção — ${skatehiveStats.total}+ PRs entre fixes de SSR, race conditions e features de homepage.`,
+    badge: `${skatehiveStats.merged}+ PRs merged · open source`,
+    badgeShort: `${skatehiveStats.merged}+ PRs`,
+    contributionStats: skatehiveStats,
     href: "https://skatehive.app",
     repo: "https://github.com/SkateHive/skatehive3.0",
     screenshotSrc: "/screenshots/skatehive.png",
@@ -102,13 +130,13 @@ const projects: Project[] = [
   },
   {
     slug: "fiveout",
-    title: "Fiveout Dashboard",
+    title: "Fiveoout",
     year: "2025",
     description:
-      "Painel fullstack para loja de streetwear — cadastro de peças, controle de estoque em tempo real e catálogo público com integração no WhatsApp. Auth SSR com Supabase.",
+      "Catálogo e painel de gestão desenvolvidos para a Fiveoout, cliente real do setor de streetwear — cadastro de peças, controle de estoque em tempo real e catálogo público com fechamento de pedido via WhatsApp. Autenticação SSR com Supabase.",
     stack: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Tailwind"],
     outcome:
-      "Estoque em tempo real e catálogo público p/ loja de streetwear real — auth SSR com Supabase.",
+      "Catálogo e gestão de estoque para cliente real de streetwear — pedidos via WhatsApp, auth SSR com Supabase.",
     href: "https://www.fiveoout.com.br",
     repo: "https://github.com/Bielcx/fiveout-dashboard",
     screenshotSrc: "/screenshots/fiveout.png",
@@ -133,14 +161,15 @@ const projects: Project[] = [
     title: "Voha",
     year: "2026",
     description:
-      "Plataforma mobile-first de planejamento, aprovação e agendamento de conteúdo para Instagram — calendário editorial, fluxo de aprovação por cliente e biblioteca de mídia. Fundação de backend pronta (Supabase + Cloudflare R2); frontend em desenvolvimento, ainda com dados fictícios.",
+      "Plataforma SaaS mobile-first para planejamento, aprovação e agendamento de conteúdo no Instagram — calendário editorial, fluxo de aprovação por cliente e biblioteca de mídia centralizada. Backend em produção (Supabase + Cloudflare R2); interface em desenvolvimento ativo, hoje validada com dados fictícios.",
     stack: ["Next.js", "TypeScript", "Supabase", "Cloudflare R2", "PostgreSQL"],
     outcome:
-      "Planejamento e aprovação de conteúdo p/ Instagram — backend pronto (Supabase + R2), frontend em construção.",
+      "Planejamento e aprovação de conteúdo para Instagram, com calendário editorial e fluxo de aprovação por cliente — backend em produção (Supabase + R2), interface em desenvolvimento ativo.",
     wip: true,
     href: "https://voha-lab.vercel.app",
     repo: "https://github.com/Bielcx/voha-lab",
     screenshotSrc: "/screenshots/voha.png",
+    screenshotFit: "contain",
     terminalHeader: true,
   },
   {
@@ -148,10 +177,10 @@ const projects: Project[] = [
     title: "JCM Soluções Gráficas",
     year: "2026",
     description:
-      "Catálogo digital para gráfica de embalagens — carrinho e finalização de pedido direto pelo WhatsApp, sem backend nem plataforma mensal. Projeto real para cliente, site estático hospedado na Cloudflare.",
+      "Catálogo digital desenvolvido para a JCM Soluções Gráficas, cliente real do setor de embalagens e impressos — carrinho e fechamento de pedido direto pelo WhatsApp, sem backend nem plataforma mensal. Site estático hospedado na Cloudflare.",
     stack: ["Astro", "TypeScript", "Tailwind CSS", "Cloudflare Pages"],
     outcome:
-      "Pedido via WhatsApp sem backend nem mensalidade — projeto real p/ cliente, estático na Cloudflare.",
+      "Catálogo para cliente real do setor de embalagens e impressos — pedido via WhatsApp, sem backend nem mensalidade, estático na Cloudflare.",
     href: "https://jcm-solucoes-graficas.biel-cavalcanti1.workers.dev/",
     repo: "https://github.com/Bielcx/jcm-solucoes-graficas",
     screenshotSrc: "/screenshots/jcm.png",
@@ -173,10 +202,22 @@ const statusStyles: Record<PRStatus, string> = {
   closed: "text-[#948F85]/50 border-[#948F85]/25",
 };
 
-function ContributionsSection({ repo, items }: { repo: string; items: Contribution[] }) {
-  const merged = items.filter((p) => p.status === "merged").length;
-  const open = items.filter((p) => p.status === "open").length;
-  const closed = items.filter((p) => p.status === "closed").length;
+function ContributionsSection({
+  repo,
+  items,
+  stats,
+}: {
+  repo: string;
+  items: Contribution[];
+  // ponytail: pass real totals in explicitly (see skatehiveStats above) —
+  // falling back to counting `items` only works if that array is exhaustive,
+  // which the curated/featured one here isn't.
+  stats?: { merged: number; open: number; closed: number; total: number };
+}) {
+  const merged = stats?.merged ?? items.filter((p) => p.status === "merged").length;
+  const open = stats?.open ?? items.filter((p) => p.status === "open").length;
+  const closed = stats?.closed ?? items.filter((p) => p.status === "closed").length;
+  const total = stats?.total ?? items.length;
   const featured = items.filter((p) => p.featured);
 
   return (
@@ -218,7 +259,7 @@ function ContributionsSection({ repo, items }: { repo: string; items: Contributi
         rel="noreferrer"
         className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] text-[#948F85]/75 light:text-neutral-500 hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
       >
-        Ver todas as {items.length} PRs no GitHub <ArrowUpRight className="size-3" weight="bold" />
+        Ver todas as {total} PRs no GitHub <ArrowUpRight className="size-3" weight="bold" />
       </a>
     </div>
   );
@@ -230,6 +271,13 @@ export default function SelectedWork() {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
 
+  // Lightbox — click a project screenshot to see it uncropped. Separate from
+  // the panel's own open/close state since it layers on top of it.
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const lightboxRef = useRef<HTMLDivElement>(null);
+  const lightboxCloseRef = useRef<HTMLButtonElement>(null);
+  const screenshotTriggerRef = useRef<HTMLButtonElement | null>(null);
+
   const openProject = useCallback(
     (project: Project, trigger: HTMLElement) => {
       triggerRef.current = trigger;
@@ -239,20 +287,27 @@ export default function SelectedWork() {
   );
 
   const close = useCallback(() => setActive(null), []);
+  const closeLightbox = useCallback(() => setLightboxOpen(false), []);
 
-  // Esc closes; Tab is trapped inside the panel while it's open (basic focus
+  // Esc closes; Tab is trapped inside whichever layer is on top (basic focus
   // trap — dialog semantics without pulling in a whole a11y library).
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!active) return;
 
       if (e.key === "Escape") {
+        if (lightboxOpen) {
+          closeLightbox();
+          return;
+        }
         close();
         return;
       }
 
-      if (e.key === "Tab" && panelRef.current) {
-        const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+      if (e.key === "Tab") {
+        const scope = lightboxOpen ? lightboxRef.current : panelRef.current;
+        if (!scope) return;
+        const focusable = scope.querySelectorAll<HTMLElement>(
           'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
         );
         if (focusable.length === 0) return;
@@ -270,7 +325,20 @@ export default function SelectedWork() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active, close]);
+  }, [active, close, lightboxOpen, closeLightbox]);
+
+  // Move focus into the lightbox on open, back to the screenshot button on
+  // close — same pattern as the panel's own focus management below.
+  useEffect(() => {
+    if (lightboxOpen) {
+      const raf = requestAnimationFrame(() => lightboxCloseRef.current?.focus());
+      return () => cancelAnimationFrame(raf);
+    }
+    if (screenshotTriggerRef.current) {
+      screenshotTriggerRef.current.focus();
+      screenshotTriggerRef.current = null;
+    }
+  }, [lightboxOpen]);
 
   useEffect(() => {
     document.body.style.overflow = active ? "hidden" : "";
@@ -304,41 +372,50 @@ export default function SelectedWork() {
           </p>
         </div>
 
-        <div className="divide-y divide-[#948F85]/15 light:divide-neutral-200">
+        <div className="border-t border-[#948F85]/15 light:border-neutral-200">
           {projects.map((project, i) => (
             <button
               key={project.slug}
               onClick={(e) => openProject(project, e.currentTarget)}
-              className="group w-full flex items-center gap-6 py-6 text-left transition-colors hover:bg-[#F3E6C4]/[0.025] light:hover:bg-neutral-900/[0.03] -mx-4 px-4 focus-visible:outline-2 focus-visible:outline-[#b497cf]"
+              className="group block w-full cursor-pointer border-b border-[#948F85]/15 light:border-neutral-200 py-7 text-left focus-visible:outline-2 focus-visible:outline-[#b497cf]"
             >
-              <span className="font-mono text-[11px] text-[#948F85]/75 light:text-neutral-400 shrink-0 w-5">
-                0{i + 1}
-              </span>
-              <span className="flex flex-col gap-1 shrink-0 md:w-[220px]">
-                <span className="text-base font-semibold tracking-tight text-[#F3E6C4] light:text-neutral-900 group-hover:text-[#b497cf] light:group-hover:text-[#8a6bab] transition-colors">
-                  {project.title}
+              <span className="flex items-start gap-6">
+                <span className="w-7 shrink-0 pt-3.5 font-mono text-xs text-[#948F85]/60 light:text-neutral-400 transition-colors group-hover:text-[#b497cf] group-focus-visible:text-[#b497cf] light:group-hover:text-[#8a6bab] light:group-focus-visible:text-[#8a6bab]">
+                  0{i + 1}
                 </span>
-                {project.badge && (
-                  <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-[#4ade80]">
-                    {project.badge}
+                <span className="block flex-1 transition-transform duration-[350ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:translate-x-3 group-focus-visible:translate-x-3 motion-reduce:transform-none motion-reduce:transition-none">
+                  <span className="text-[clamp(28px,3vw,44px)] font-extrabold uppercase leading-[1.1] tracking-[-0.02em] text-[#F3E6C4] light:text-neutral-900 transition-colors group-hover:text-[#b497cf] group-focus-visible:text-[#b497cf] light:group-hover:text-[#8a6bab] light:group-focus-visible:text-[#8a6bab]">
+                    {project.title}
+                  </span>
+                </span>
+                {project.badgeShort && (
+                  <span className="shrink-0 whitespace-nowrap pt-4 font-mono text-[10px] uppercase tracking-[0.08em] text-[#4ade80]">
+                    {project.badgeShort}
                   </span>
                 )}
                 {project.wip && (
-                  <span className="font-mono text-[10px] uppercase tracking-[0.08em] text-[#948F85]/70 light:text-neutral-400">
-                    em desenvolvimento
+                  <span className="shrink-0 whitespace-nowrap pt-4 font-mono text-[10px] uppercase tracking-[0.08em] text-[#948F85]/70 light:text-neutral-400">
+                    wip
+                  </span>
+                )}
+                <span className="shrink-0 pt-3.5 font-mono text-xs text-[#948F85]/60 light:text-neutral-400">
+                  {project.year}
+                </span>
+                <ArrowUpRight
+                  className="shrink-0 mt-2 size-5 text-[#b497cf] light:text-[#8a6bab] opacity-0 -translate-x-2 translate-y-2 transition-all duration-[350ms] delay-100 ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transform-none motion-reduce:transition-none"
+                  weight="bold"
+                />
+              </span>
+              <span className="block max-h-0 overflow-hidden pl-[52px] opacity-0 transition-all duration-[400ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:max-h-24 group-hover:opacity-100 group-focus-visible:max-h-24 group-focus-visible:opacity-100 motion-reduce:transition-none">
+                <span className="block max-w-[560px] pt-3 font-mono text-[13px] leading-relaxed text-[#948F85] light:text-neutral-500">
+                  {project.outcome}
+                </span>
+                {project.badge && (
+                  <span className="block pt-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-[#4ade80]">
+                    {project.badge}
                   </span>
                 )}
               </span>
-              <span className="hidden md:block flex-1 text-[13px] leading-relaxed text-[#948F85] light:text-neutral-500">
-                {project.outcome}
-              </span>
-              <span className="font-mono text-[11px] text-[#948F85]/75 light:text-neutral-400 shrink-0">
-                {project.year}
-              </span>
-              <ArrowUpRight
-                className="size-4 text-[#948F85]/75 group-hover:text-[#b497cf] transition-colors shrink-0"
-                weight="bold"
-              />
             </button>
           ))}
         </div>
@@ -373,7 +450,7 @@ export default function SelectedWork() {
                 ref={closeButtonRef}
                 onClick={close}
                 aria-label="Fechar painel"
-                className="fixed md:absolute top-3 right-3 z-20 flex size-11 items-center justify-center bg-[#141413]/70 border border-[#948F85]/25 text-[#F3E6C4] hover:bg-[#141413]/95 hover:border-[#F3E6C4]/50 transition-colors"
+                className="fixed md:absolute top-3 right-3 z-20 flex size-11 cursor-pointer items-center justify-center text-[#b497cf] light:text-[#8a6bab] hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
               >
                 <X className="size-5" weight="bold" />
               </button>
@@ -457,13 +534,28 @@ export default function SelectedWork() {
                   </p>
                 </div>
 
-                <div className="aspect-video w-full overflow-hidden bg-[#1a1a18] light:bg-neutral-100 border border-[#948F85]/15 light:border-neutral-200">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    screenshotTriggerRef.current = e.currentTarget;
+                    setLightboxOpen(true);
+                  }}
+                  aria-label={`Ampliar screenshot — ${active.title}`}
+                  className="group/shot relative aspect-video w-full overflow-hidden bg-[#1a1a18] light:bg-neutral-100 border border-[#948F85]/15 light:border-neutral-200 focus-visible:outline-2 focus-visible:outline-[#b497cf]"
+                >
                   <img
                     src={active.screenshotSrc}
                     alt={`${active.title} — preview`}
-                    className="h-full w-full object-cover object-top"
+                    className={
+                      active.screenshotFit === "contain"
+                        ? "h-full w-full object-contain"
+                        : "h-full w-full object-cover object-top"
+                    }
                   />
-                </div>
+                  <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#141413]/0 opacity-0 transition-all duration-200 group-hover/shot:bg-[#141413]/40 group-hover/shot:opacity-100">
+                    <ArrowsOut className="size-6 text-[#F3E6C4]" weight="bold" />
+                  </span>
+                </button>
 
                 <div className="flex flex-wrap gap-2">
                   {active.stack.map((t) => (
@@ -472,11 +564,48 @@ export default function SelectedWork() {
                 </div>
 
                 {active.contributions && (
-                  <ContributionsSection repo={active.repo} items={active.contributions} />
+                  <ContributionsSection
+                    repo={active.repo}
+                    items={active.contributions}
+                    stats={active.contributionStats}
+                  />
                 )}
               </div>
             </motion.aside>
           </>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {active && lightboxOpen && (
+          <motion.div
+            key="lightbox"
+            ref={lightboxRef}
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Screenshot ampliado — ${active.title}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            onClick={closeLightbox}
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 p-6 md:p-16"
+          >
+            <img
+              src={active.screenshotSrc}
+              alt={`${active.title} — screenshot ampliado`}
+              onClick={(e) => e.stopPropagation()}
+              className="max-h-full max-w-full object-contain"
+            />
+            <button
+              ref={lightboxCloseRef}
+              onClick={closeLightbox}
+              aria-label="Fechar screenshot ampliado"
+              className="fixed top-3 right-3 md:top-6 md:right-6 flex size-11 items-center justify-center bg-[#141413]/70 border border-[#948F85]/25 text-[#F3E6C4] hover:bg-[#141413]/95 hover:border-[#F3E6C4]/50 transition-colors"
+            >
+              <X className="size-5" weight="bold" />
+            </button>
+          </motion.div>
         )}
       </AnimatePresence>
     </>

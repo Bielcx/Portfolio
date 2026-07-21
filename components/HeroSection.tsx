@@ -106,7 +106,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
               rel="noreferrer"
               className="flex min-h-11 items-center gap-2 font-mono text-xs text-[#948F85] hover:text-[#F3E6C4] light:text-neutral-500 light:hover:text-neutral-900 transition-colors"
             >
-              <GithubLogo size={14} weight="bold" /> GitHub
+              <GithubLogo size={14} weight="bold" className="text-[#b497cf] light:text-[#8a6bab]" /> GitHub
             </a>
             <a
               href={profile.linkedin}
@@ -114,13 +114,13 @@ export default function HeroSection({ profile }: { profile: Profile }) {
               rel="noreferrer"
               className="flex min-h-11 items-center gap-2 font-mono text-xs text-[#948F85] hover:text-[#F3E6C4] light:text-neutral-500 light:hover:text-neutral-900 transition-colors"
             >
-              <LinkedinLogo size={14} weight="bold" /> LinkedIn
+              <LinkedinLogo size={14} weight="bold" className="text-[#b497cf] light:text-[#8a6bab]" /> LinkedIn
             </a>
             <a
               href={`mailto:${profile.email}`}
               className="flex min-h-11 items-center gap-2 font-mono text-xs text-[#948F85] hover:text-[#F3E6C4] light:text-neutral-500 light:hover:text-neutral-900 transition-colors"
             >
-              <EnvelopeSimple size={14} weight="bold" /> Email
+              <EnvelopeSimple size={14} weight="bold" className="text-[#b497cf] light:text-[#8a6bab]" /> Email
             </a>
           </motion.div>
         </div>
@@ -135,18 +135,14 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             {!reducedMotion && (
               <PixelBlast
                 variant="square"
-                pixelSize={7}
+                pixelSize={3}
                 color="#B497CF"
-                patternScale={2}
+                patternScale={2.75}
                 patternDensity={1}
                 enableRipples
                 rippleSpeed={0.4}
                 rippleThickness={0.12}
                 rippleIntensityScale={1.5}
-                liquid
-                liquidStrength={0.12}
-                liquidRadius={1.2}
-                liquidWobbleSpeed={5}
                 edgeFade={0.25}
                 transparent
               />
