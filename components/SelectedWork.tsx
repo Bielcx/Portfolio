@@ -3,7 +3,9 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowUpRight, ArrowsOut, X } from "@phosphor-icons/react";
+import { ArrowUpRight, X } from "@phosphor-icons/react";
+import { Safari } from "./ui/safari";
+import { Iphone } from "./ui/iphone";
 
 // ponytail: ogl (WebGL) is real weight — keep it out of the initial page
 // bundle entirely and only fetch it the first time a panel with a
@@ -35,12 +37,10 @@ type Project = {
   href: string;
   repo: string;
   screenshotSrc: string;
-  // ponytail: Voha's screenshot is a wide split-screen (brand panel + login
-  // card) — squeezing it into the shared 16:9 box with object-cover always
-  // crops off the logo or the card, no matter how the source is pre-cropped.
-  // "contain" shows the whole image letterboxed instead; every other project
-  // is pre-cropped to exactly 16:9 so "cover" is effectively a no-op there.
-  screenshotFit?: "cover" | "contain";
+  // ponytail: real mobile-viewport screenshot for the Iphone mock in the
+  // panel — falls back to `screenshotSrc` (the desktop shot) as a placeholder
+  // for projects that don't have a dedicated mobile capture yet.
+  screenshotMobileSrc?: string;
   // ponytail: one-line result/nature phrase shown in the list row instead of
   // a stack preview — "Next.js TypeScript Supabase" repeated across projects
   // was noise, not differentiation. Full stack is still in the panel below.
@@ -124,6 +124,7 @@ const projects: Project[] = [
     href: "https://skatehive.app",
     repo: "https://github.com/SkateHive/skatehive3.0",
     screenshotSrc: "/screenshots/skatehive.png",
+    screenshotMobileSrc: "/screenshots/skatehive-mobile.png",
     terminalHeader: true,
     terminalTint: "#4ade80",
     contributions: skatehiveContributions,
@@ -137,9 +138,12 @@ const projects: Project[] = [
     stack: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Tailwind"],
     outcome:
       "Catálogo e gestão de estoque para cliente real de streetwear — pedidos via WhatsApp, auth SSR com Supabase.",
+    badge: "Em produção · cliente real",
+    badgeShort: "PROD",
     href: "https://www.fiveoout.com.br",
     repo: "https://github.com/Bielcx/fiveout-dashboard",
     screenshotSrc: "/screenshots/fiveout.png",
+    screenshotMobileSrc: "/screenshots/fiveout-mobile.png",
     terminalHeader: true,
   },
   {
@@ -151,9 +155,12 @@ const projects: Project[] = [
     stack: ["React 19", "Three.js", "R3F", "Framer Motion", "Vite"],
     outcome:
       "Skate 3D interativo com parallax de mouse e animações scroll-triggered.",
+    badge: "Demo — template, não é cliente real",
+    badgeShort: "DEMO",
     href: "https://mirante-skateshop.vercel.app",
     repo: "https://github.com/Bielcx/mirante-skateshop",
     screenshotSrc: "/screenshots/mirante.png",
+    screenshotMobileSrc: "/screenshots/mirante-mobile.png",
     terminalHeader: true,
   },
   {
@@ -169,7 +176,7 @@ const projects: Project[] = [
     href: "https://voha-lab.vercel.app",
     repo: "https://github.com/Bielcx/voha-lab",
     screenshotSrc: "/screenshots/voha.png",
-    screenshotFit: "contain",
+    screenshotMobileSrc: "/screenshots/voha-mobile.png",
     terminalHeader: true,
   },
   {
@@ -181,12 +188,21 @@ const projects: Project[] = [
     stack: ["Astro", "TypeScript", "Tailwind CSS", "Cloudflare Pages"],
     outcome:
       "Catálogo para cliente real do setor de embalagens e impressos — pedido via WhatsApp, sem backend nem mensalidade, estático na Cloudflare.",
+    badge: "Em produção · cliente real",
+    badgeShort: "PROD",
     href: "https://jcm-solucoes-graficas.biel-cavalcanti1.workers.dev/",
     repo: "https://github.com/Bielcx/jcm-solucoes-graficas",
     screenshotSrc: "/screenshots/jcm.png",
+    screenshotMobileSrc: "/screenshots/jcm-mobile.png",
     terminalHeader: true,
   },
 ];
+
+// ponytail: strips the protocol/trailing slash so the URL reads clean inside
+// the Safari mockup's address bar (e.g. "https://skatehive.app/" → "skatehive.app").
+function hostLabel(url: string) {
+  return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+}
 
 function StackBadge({ label }: { label: string }) {
   return (
@@ -394,7 +410,7 @@ export default function SelectedWork() {
                   </span>
                 )}
                 {project.wip && (
-                  <span className="shrink-0 whitespace-nowrap pt-4 font-mono text-[10px] uppercase tracking-[0.08em] text-[#948F85]/70 light:text-neutral-400">
+                  <span className="shrink-0 whitespace-nowrap pt-4 font-mono text-[10px] uppercase tracking-[0.08em] text-[#4ade80]">
                     wip
                   </span>
                 )}
@@ -534,28 +550,47 @@ export default function SelectedWork() {
                   </p>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    screenshotTriggerRef.current = e.currentTarget;
-                    setLightboxOpen(true);
-                  }}
-                  aria-label={`Ampliar screenshot — ${active.title}`}
-                  className="group/shot relative aspect-video w-full overflow-hidden bg-[#1a1a18] light:bg-neutral-100 border border-[#948F85]/15 light:border-neutral-200 focus-visible:outline-2 focus-visible:outline-[#b497cf]"
-                >
-                  <img
-                    src={active.screenshotSrc}
-                    alt={`${active.title} — preview`}
-                    className={
-                      active.screenshotFit === "contain"
-                        ? "h-full w-full object-contain"
-                        : "h-full w-full object-cover object-top"
-                    }
-                  />
-                  <span className="pointer-events-none absolute inset-0 flex items-center justify-center bg-[#141413]/0 opacity-0 transition-all duration-200 group-hover/shot:bg-[#141413]/40 group-hover/shot:opacity-100">
-                    <ArrowsOut className="size-6 text-[#F3E6C4]" weight="bold" />
-                  </span>
-                </button>
+                {/* ponytail: two device mocks side by side instead of one flat
+                    screenshot — Safari (desktop) wider on the left, iPhone
+                    (mobile) narrower on the right, both height-matched so
+                    neither towers over the other (their native aspect ratios
+                    are wildly different: Safari ~1.6:1, iPhone ~0.49:1).
+                    Both currently render the same source image as a
+                    placeholder — real mobile-viewport screenshots per
+                    project are still TODO (see project data/screenshotSrc). */}
+                <div className="flex w-full items-center justify-center gap-12 overflow-x-auto py-2">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      screenshotTriggerRef.current = e.currentTarget;
+                      setLightboxOpen(true);
+                    }}
+                    aria-label={`Ampliar preview desktop — ${active.title}`}
+                    className="group/shot shrink-0 focus-visible:outline-2 focus-visible:outline-[#b497cf]"
+                  >
+                    <Safari
+                      url={hostLabel(active.href)}
+                      imageSrc={active.screenshotSrc}
+                      style={{ height: "14rem", width: "auto" }}
+                      className="transition-opacity group-hover/shot:opacity-80"
+                    />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      screenshotTriggerRef.current = e.currentTarget;
+                      setLightboxOpen(true);
+                    }}
+                    aria-label={`Ampliar preview mobile — ${active.title}`}
+                    className="group/shot shrink-0 focus-visible:outline-2 focus-visible:outline-[#b497cf]"
+                  >
+                    <Iphone
+                      src={active.screenshotMobileSrc ?? active.screenshotSrc}
+                      style={{ height: "14rem", width: "auto" }}
+                      className="transition-opacity group-hover/shot:opacity-80"
+                    />
+                  </button>
+                </div>
 
                 <div className="flex flex-wrap gap-2">
                   {active.stack.map((t) => (
