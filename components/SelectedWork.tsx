@@ -57,10 +57,6 @@ type Project = {
   // was FaultyTerminal) — SkateHive was the design pilot, now replicated
   // across all projects (see issue #3).
   terminalHeader?: boolean;
-  // ponytail: unused while the header renders Galaxy (which is hardcoded to
-  // the site accent, see SelectedWork's render). Kept on the data model in
-  // case per-project tinting comes back.
-  terminalTint?: string;
   // ponytail: SkateHive-only — open source contribution history. Other
   // projects don't have a PR trail so this stays undefined for them.
   contributions?: Contribution[];
@@ -126,7 +122,6 @@ const projects: Project[] = [
     screenshotSrc: "/screenshots/skatehive.png",
     screenshotMobileSrc: "/screenshots/skatehive-mobile.png",
     terminalHeader: true,
-    terminalTint: "#4ade80",
     contributions: skatehiveContributions,
   },
   {
@@ -297,9 +292,15 @@ export default function SelectedWork() {
   const lightboxCloseRef = useRef<HTMLButtonElement>(null);
   const screenshotTriggerRef = useRef<HTMLButtonElement | null>(null);
 
+  // ponytail: no theme context in this app (AnimatedThemeToggler just flips a
+  // class on <html>), so sample it once on open — the panel is modal, nobody
+  // toggles the theme with it up.
+  const [isLight, setIsLight] = useState(false);
+
   const openProject = useCallback(
     (project: Project, trigger: HTMLElement) => {
       triggerRef.current = trigger;
+      setIsLight(document.documentElement.classList.contains("light"));
       setActive(project);
     },
     []
@@ -475,20 +476,18 @@ export default function SelectedWork() {
               </button>
 
               {active.terminalHeader ? (
-                // ponytail: bg-[#141413] here is intentional and NOT theme-aware
-                // — this header is a media block (WebGL starfield + a dark
-                // scrim for caption legibility), same pattern as a photo/video
-                // caption staying dark regardless of the surrounding UI theme.
-                // Without an explicit bg here, Galaxy's transparent canvas and
-                // the gradient below it showed whatever was behind the fixed
-                // panel — meaning light theme bled a near-black gradient over
-                // a white panel, reading as noisy grey static instead of stars.
-                <div className="relative h-56 w-full overflow-hidden border-b border-line bg-[#141413]">
+                // The bg has to be explicit (Galaxy's canvas is transparent —
+                // without it the gradient shows whatever is behind the fixed
+                // panel and reads as grey static), but it follows the panel's
+                // own surface so the stars float on the modal background in
+                // both themes.
+                <div className="relative h-56 w-full overflow-hidden border-b border-line bg-surface">
                   {!reducedMotion && (
                   <Galaxy
                     className="absolute inset-0"
                     color="#b497cf"
                     tintStrength={1}
+                    solidTint={isLight}
                     density={1}
                     glowIntensity={0.3}
                     saturation={0}
@@ -508,17 +507,14 @@ export default function SelectedWork() {
                       canvas purely for the gradient/title legibility, and
                       would otherwise swallow the mousemove events Galaxy
                       needs for its hover repulsion effect. */}
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#141413] via-transparent to-[#141413]/40" />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface via-transparent to-surface/40" />
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 px-8 pb-6">
                     <span
-                      className="font-mono text-xs uppercase tracking-[0.2em]"
-                      style={{ color: active.terminalTint ?? "#b497cf" }}
+                      className="font-mono text-xs uppercase tracking-[0.2em] text-ok"
                     >
                       Project
                     </span>
-                    {/* Not text-ink: this caption sits on the always-dark
-                        media block above, so it stays cream in both themes. */}
-                    <h2 className="text-2xl font-bold tracking-tight text-[#F3E6C4] mt-1">
+                    <h2 className="text-2xl font-bold tracking-tight text-ink mt-1">
                       {active.title}
                     </h2>
                   </div>

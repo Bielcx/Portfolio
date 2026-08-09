@@ -48,6 +48,7 @@ uniform float uAutoCenterRepulsion;
 uniform bool uTransparent;
 uniform vec3 uTintColor;
 uniform float uTintStrength;
+uniform float uSolidTint;
 
 varying vec2 vUv;
 
@@ -182,7 +183,15 @@ void main() {
     float alpha = length(col);
     alpha = smoothstep(0.0, 0.3, alpha);
     alpha = min(alpha, 1.0);
-    gl_FragColor = vec4(col, alpha);
+    // On a light background the default ramp (color * luminance) makes faint
+    // stars near-black, so they read as dirt instead of light. uSolidTint
+    // inverts it: the halo stays full-strength hue and the core *deepens*
+    // instead of brightening — the same glow falloff, readable on paper.
+    // Dark mode's core blows out past white (lum > 1 clamps to 1.0, reading
+    // silver); the paper equivalent is ink pooling to near-black, so let the
+    // core keep deepening past the halo instead of stopping halfway.
+    vec3 solid = uTintColor * (1.0 - 0.72 * clamp(lum, 0.0, 1.2));
+    gl_FragColor = vec4(mix(col, solid, uSolidTint), alpha);
   } else {
     gl_FragColor = vec4(col, 1.0);
   }
@@ -223,6 +232,9 @@ export interface GalaxyProps extends React.HTMLAttributes<HTMLDivElement> {
   // ponytail: portfolio-specific addition, see file header.
   color?: string;
   tintStrength?: number;
+  // Full-strength hue with falloff carried by alpha — for light backgrounds,
+  // where the additive ramp turns faint stars black.
+  solidTint?: boolean;
 }
 
 export default function Galaxy({
@@ -244,6 +256,7 @@ export default function Galaxy({
   transparent = true,
   color = "#B497CF",
   tintStrength = 1,
+  solidTint = false,
   className,
   style,
   ...rest
@@ -317,6 +330,7 @@ export default function Galaxy({
         uTransparent: { value: transparent },
         uTintColor: { value: new Color(tr, tg, tb) },
         uTintStrength: { value: tintStrength },
+        uSolidTint: { value: solidTint ? 1 : 0 },
       },
     });
 
@@ -391,6 +405,7 @@ export default function Galaxy({
     transparent,
     color,
     tintStrength,
+    solidTint,
   ]);
 
   return <div ref={ctnDom} className={`galaxy-container ${className ?? ""}`} style={style} {...rest} />;
