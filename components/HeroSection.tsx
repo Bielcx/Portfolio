@@ -58,9 +58,9 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="flex items-center gap-2.5 font-mono text-xs text-[#b497cf] light:text-[#8a6bab] tracking-[0.2em] uppercase mb-6"
+            className="flex items-center gap-2.5 font-mono text-xs text-brand tracking-[0.2em] uppercase mb-6"
           >
-            <span className="size-[7px] shrink-0 bg-[#b497cf] pulse-dot" />
+            <span className="size-[7px] shrink-0 bg-brand pulse-dot" />
             Available for work
           </motion.p>
 
@@ -68,7 +68,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="uppercase font-black text-[#F3E6C4] light:text-neutral-900 tracking-[-0.01em] leading-[1.05] text-[clamp(48px,6.5vw,84px)] mb-4"
+            className="uppercase font-black text-ink tracking-[-0.01em] leading-[1.05] text-[clamp(48px,6.5vw,84px)] mb-4"
           >
             Gabriel
             <br />
@@ -79,7 +79,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.3 }}
-            className="font-mono text-sm text-[#948F85] light:text-neutral-500 mb-2"
+            className="font-mono text-sm text-ink-muted mb-2"
           >
             Full Stack Developer
           </motion.p>
@@ -88,7 +88,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.4 }}
-            className="font-mono text-sm text-[#948F85] light:text-neutral-500 max-w-[420px] leading-7 mb-8"
+            className="font-mono text-sm text-ink-muted max-w-[420px] leading-7 mb-8"
           >
             Construo produtos web do banco ao deploy — React, Next.js e
             Node.js, para clientes reais no Brasil e projetos open source.
@@ -104,23 +104,23 @@ export default function HeroSection({ profile }: { profile: Profile }) {
               href={profile.github}
               target="_blank"
               rel="noreferrer"
-              className="flex min-h-11 items-center gap-2 font-mono text-xs text-[#948F85] hover:text-[#F3E6C4] light:text-neutral-500 light:hover:text-neutral-900 transition-colors"
+              className="flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
             >
-              <GithubLogo size={14} weight="bold" className="text-[#b497cf] light:text-[#8a6bab]" /> GitHub
+              <GithubLogo size={14} weight="bold" className="!text-brand" /> GitHub
             </a>
             <a
               href={profile.linkedin}
               target="_blank"
               rel="noreferrer"
-              className="flex min-h-11 items-center gap-2 font-mono text-xs text-[#948F85] hover:text-[#F3E6C4] light:text-neutral-500 light:hover:text-neutral-900 transition-colors"
+              className="flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
             >
-              <LinkedinLogo size={14} weight="bold" className="text-[#b497cf] light:text-[#8a6bab]" /> LinkedIn
+              <LinkedinLogo size={14} weight="bold" className="!text-brand" /> LinkedIn
             </a>
             <a
               href={`mailto:${profile.email}`}
-              className="flex min-h-11 items-center gap-2 font-mono text-xs text-[#948F85] hover:text-[#F3E6C4] light:text-neutral-500 light:hover:text-neutral-900 transition-colors"
+              className="flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
             >
-              <EnvelopeSimple size={14} weight="bold" className="text-[#b497cf] light:text-[#8a6bab]" /> Email
+              <EnvelopeSimple size={14} weight="bold" className="!text-brand" /> Email
             </a>
           </motion.div>
         </div>

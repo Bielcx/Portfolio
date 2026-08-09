@@ -448,11 +448,14 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
         threeRef.current = null;
       }
       const canvas = document.createElement("canvas");
+      // ponytail: sem powerPreference "high-performance" — num notebook híbrido
+      // isso acorda a GPU dedicada para um canvas de 340px, e a troca de GPU é
+      // justamente onde drivers antigos travam. O default deixa o navegador
+      // escolher (integrada), que dá conta de sobra deste shader.
       const renderer = new THREE.WebGLRenderer({
         canvas,
         antialias,
         alpha: true,
-        powerPreference: "high-performance",
       });
       renderer.domElement.style.width = "100%";
       renderer.domElement.style.height = "100%";

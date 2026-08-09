@@ -16,7 +16,7 @@ const profile = {
 export default function Home() {
   return (
     <PortfolioWrapper>
-      <main className="relative w-full min-h-screen bg-[#141413] text-[#F3E6C4] light:bg-[#fafafa] light:text-neutral-900">
+      <main className="relative w-full min-h-screen bg-surface text-ink">
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -33,47 +33,47 @@ export default function Home() {
 
           <section
             id="contact"
-            className="mx-auto max-w-5xl px-8 py-24 border-t border-[#948F85]/15 light:border-neutral-200"
+            className="mx-auto max-w-5xl px-8 py-24 border-t border-line"
           >
-            <p className="font-mono text-xs text-[#948F85]/70 light:text-neutral-400 tracking-[0.2em] uppercase mb-8">
+            <p className="font-mono text-xs text-ink-faint tracking-[0.2em] uppercase mb-8">
               Contact
             </p>
 
-            <div className="border border-[#948F85]/20 light:border-neutral-300 bg-[#111110] light:bg-neutral-50 p-8 font-mono text-sm leading-loose text-[#948F85] light:text-neutral-600">
+            <div className="border border-line-strong bg-surface-2 p-8 font-mono text-sm leading-loose text-ink-muted">
               <p>
-                <span className="text-[#4ade80]">$</span> gabriel contact --new-project
+                <span className="text-ok">$</span> gabriel contact --new-project
               </p>
-              <p className="text-[#948F85]/70 light:text-neutral-500">
+              <p className="text-ink-faint">
                 Respondo projetos sérios de desenvolvimento web, mobile e consultoria técnica.
               </p>
               <p className="mt-4">
-                <span className="text-[#4ade80]">→</span>{" "}
+                <span className="text-ok">→</span>{" "}
                 <a
                   href={`mailto:${profile.email}`}
-                  className="font-bold text-[#b497cf] light:text-[#8a6bab] hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
+                  className="font-bold text-brand hover:text-ink transition-colors"
                 >
                   email
                 </a>{" "}
-                <span className="text-[#948F85]/60 light:text-neutral-400">
+                <span className="text-ink-faint">
                   // {profile.email}
                 </span>
               </p>
               <p>
-                <span className="text-[#4ade80]">→</span>{" "}
+                <span className="text-ok">→</span>{" "}
                 <a
                   href="https://wa.me/5511960137983"
                   target="_blank"
                   rel="noreferrer"
-                  className="font-bold text-[#b497cf] light:text-[#8a6bab] hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
+                  className="font-bold text-brand hover:text-ink transition-colors"
                 >
                   whatsapp
                 </a>{" "}
-                <span className="text-[#948F85]/60 light:text-neutral-400">
+                <span className="text-ink-faint">
                   // resposta mais rápida
                 </span>
                 <span
                   aria-hidden
-                  className="ml-2 inline-block h-[18px] w-[9px] align-middle bg-[#b497cf] animate-[blink_1.1s_step-end_infinite] motion-reduce:animate-none"
+                  className="ml-2 inline-block h-[18px] w-[9px] align-middle bg-brand animate-[blink_1.1s_step-end_infinite] motion-reduce:animate-none"
                 />
               </p>
             </div>
@@ -83,7 +83,7 @@ export default function Home() {
                 href={profile.github}
                 target="_blank"
                 rel="noreferrer"
-                className="flex min-h-11 items-center text-[#948F85] hover:text-[#F3E6C4] light:text-neutral-500 light:hover:text-neutral-900 transition-colors"
+                className="flex min-h-11 items-center text-ink-muted hover:text-ink transition-colors"
               >
                 GitHub ↗
               </a>
@@ -91,18 +91,18 @@ export default function Home() {
                 href={profile.linkedin}
                 target="_blank"
                 rel="noreferrer"
-                className="flex min-h-11 items-center text-[#948F85] hover:text-[#F3E6C4] light:text-neutral-500 light:hover:text-neutral-900 transition-colors"
+                className="flex min-h-11 items-center text-ink-muted hover:text-ink transition-colors"
               >
                 LinkedIn ↗
               </a>
             </div>
           </section>
 
-          <footer className="mx-auto max-w-5xl px-8 py-8 border-t border-[#948F85]/15 light:border-neutral-200 flex items-center justify-between">
-            <span className="font-mono text-xs text-[#948F85]/50 light:text-neutral-400">
+          <footer className="mx-auto max-w-5xl px-8 py-8 border-t border-line flex items-center justify-between">
+            <span className="font-mono text-xs text-ink-faint">
               © {new Date().getFullYear()} Gabriel Cavalcanti
             </span>
-            <span className="font-mono text-xs text-[#948F85]/50 light:text-neutral-400">
+            <span className="font-mono text-xs text-ink-faint">
               Built with Next.js
             </span>
           </footer>

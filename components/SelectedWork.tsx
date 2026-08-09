@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, X } from "@phosphor-icons/react";
 import { Safari } from "./ui/safari";
 import { Iphone } from "./ui/iphone";
@@ -206,16 +206,16 @@ function hostLabel(url: string) {
 
 function StackBadge({ label }: { label: string }) {
   return (
-    <span className="whitespace-nowrap font-mono text-[11px] leading-none text-[#948F85]/90 light:text-neutral-500 border border-[#948F85]/25 light:border-neutral-300 px-2 py-1">
+    <span className="whitespace-nowrap font-mono text-[11px] leading-none text-ink-muted border border-line-strong px-2 py-1">
       {label}
     </span>
   );
 }
 
 const statusStyles: Record<PRStatus, string> = {
-  merged: "text-[#4ade80] border-[#4ade80]/30",
-  open: "text-[#b497cf] light:text-[#8a6bab] border-[#b497cf]/30 light:border-[#8a6bab]/30",
-  closed: "text-[#948F85]/50 border-[#948F85]/25",
+  merged: "text-ok border-ok/40",
+  open: "text-brand border-brand/40",
+  closed: "text-ink-faint border-line-strong",
 };
 
 function ContributionsSection({
@@ -239,26 +239,26 @@ function ContributionsSection({
   return (
     <div>
       <div className="flex items-baseline justify-between mb-4">
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#4ade80]">
+        <span className="font-mono text-xs uppercase tracking-[0.2em] text-ok">
           Contributions
         </span>
-        <span className="font-mono text-[11px] text-[#948F85]/75 light:text-neutral-500">
+        <span className="font-mono text-[11px] text-ink-faint">
           {merged} merged · {open} open · {closed} closed
         </span>
       </div>
-      <div className="divide-y divide-[#948F85]/10 light:divide-neutral-200 border border-[#948F85]/15 light:border-neutral-200">
+      <div className="divide-y divide-line border border-line">
         {featured.map((pr) => (
           <a
             key={pr.number}
             href={`${repo}/pull/${pr.number}`}
             target="_blank"
             rel="noreferrer"
-            className="group flex items-start gap-3 px-4 py-3 hover:bg-[#F3E6C4]/[0.03] light:hover:bg-neutral-900/[0.03] transition-colors"
+            className="group flex items-start gap-3 px-4 py-3 hover:bg-ink/[0.03] transition-colors"
           >
-            <span className="font-mono text-[11px] text-[#948F85]/75 light:text-neutral-500 shrink-0 mt-0.5">
+            <span className="font-mono text-[11px] text-ink-faint shrink-0 mt-0.5">
               #{pr.number}
             </span>
-            <span className="flex-1 text-[13px] leading-snug text-[#948F85] light:text-neutral-600 group-hover:text-[#F3E6C4] light:group-hover:text-neutral-900 transition-colors">
+            <span className="flex-1 text-[13px] leading-snug text-ink-muted group-hover:text-ink transition-colors">
               {pr.title}
             </span>
             <span
@@ -273,7 +273,7 @@ function ContributionsSection({
         href={`${repo}/pulls/Bielcx`}
         target="_blank"
         rel="noreferrer"
-        className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] text-[#948F85]/75 light:text-neutral-500 hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
+        className="mt-3 inline-flex items-center gap-1 font-mono text-[11px] text-ink-faint hover:text-ink transition-colors"
       >
         Ver todas as {total} PRs no GitHub <ArrowUpRight className="size-3" weight="bold" />
       </a>
@@ -283,6 +283,9 @@ function ContributionsSection({
 
 export default function SelectedWork() {
   const [active, setActive] = useState<Project | null>(null);
+  // Mesmo motivo do PixelBlast no hero: quem pediu menos movimento não recebe
+  // um canvas WebGL animado, e não só uma animação pausada.
+  const reducedMotion = useReducedMotion();
   const panelRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
@@ -379,55 +382,55 @@ export default function SelectedWork() {
   return (
     <>
       <section id="work" className="mx-auto max-w-5xl px-8 py-24">
-        <div className="mb-10 flex items-baseline justify-between border-b border-[#948F85]/15 light:border-neutral-200 pb-4">
-          <p className="font-mono text-xs uppercase tracking-[0.2em] text-[#b497cf] light:text-[#8a6bab]">
+        <div className="mb-10 flex items-baseline justify-between border-b border-line pb-4">
+          <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand">
             Selected Work
           </p>
-          <p className="font-mono text-xs text-[#948F85]/75 light:text-neutral-500">
+          <p className="font-mono text-xs text-ink-faint">
             0{projects.length} — projects
           </p>
         </div>
 
-        <div className="border-t border-[#948F85]/15 light:border-neutral-200">
+        <div className="border-t border-line">
           {projects.map((project, i) => (
             <button
               key={project.slug}
               onClick={(e) => openProject(project, e.currentTarget)}
-              className="group block w-full cursor-pointer border-b border-[#948F85]/15 light:border-neutral-200 py-7 text-left focus-visible:outline-2 focus-visible:outline-[#b497cf]"
+              className="group block w-full cursor-pointer border-b border-line py-7 text-left focus-visible:outline-2 focus-visible:outline-brand"
             >
               <span className="flex items-start gap-6">
-                <span className="w-7 shrink-0 pt-3.5 font-mono text-xs text-[#948F85]/60 light:text-neutral-400 transition-colors group-hover:text-[#b497cf] group-focus-visible:text-[#b497cf] light:group-hover:text-[#8a6bab] light:group-focus-visible:text-[#8a6bab]">
+                <span className="w-7 shrink-0 pt-3.5 font-mono text-xs text-ink-faint transition-colors group-hover:text-brand group-focus-visible:text-brand">
                   0{i + 1}
                 </span>
                 <span className="block flex-1 transition-transform duration-[350ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:translate-x-3 group-focus-visible:translate-x-3 motion-reduce:transform-none motion-reduce:transition-none">
-                  <span className="text-[clamp(28px,3vw,44px)] font-extrabold uppercase leading-[1.1] tracking-[-0.02em] text-[#F3E6C4] light:text-neutral-900 transition-colors group-hover:text-[#b497cf] group-focus-visible:text-[#b497cf] light:group-hover:text-[#8a6bab] light:group-focus-visible:text-[#8a6bab]">
+                  <span className="text-[clamp(28px,3vw,44px)] font-extrabold uppercase leading-[1.1] tracking-[-0.02em] text-ink transition-colors group-hover:text-brand group-focus-visible:text-brand">
                     {project.title}
                   </span>
                 </span>
                 {project.badgeShort && (
-                  <span className="shrink-0 whitespace-nowrap pt-4 font-mono text-[10px] uppercase tracking-[0.08em] text-[#4ade80]">
+                  <span className="shrink-0 whitespace-nowrap pt-4 font-mono text-[10px] uppercase tracking-[0.08em] text-ok">
                     {project.badgeShort}
                   </span>
                 )}
                 {project.wip && (
-                  <span className="shrink-0 whitespace-nowrap pt-4 font-mono text-[10px] uppercase tracking-[0.08em] text-[#4ade80]">
+                  <span className="shrink-0 whitespace-nowrap pt-4 font-mono text-[10px] uppercase tracking-[0.08em] text-ok">
                     wip
                   </span>
                 )}
-                <span className="shrink-0 pt-3.5 font-mono text-xs text-[#948F85]/60 light:text-neutral-400">
+                <span className="shrink-0 pt-3.5 font-mono text-xs text-ink-faint">
                   {project.year}
                 </span>
                 <ArrowUpRight
-                  className="shrink-0 mt-2 size-5 text-[#b497cf] light:text-[#8a6bab] opacity-0 -translate-x-2 translate-y-2 transition-all duration-[350ms] delay-100 ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transform-none motion-reduce:transition-none"
+                  className="shrink-0 mt-2 size-5 text-brand opacity-0 -translate-x-2 translate-y-2 transition-all duration-[350ms] delay-100 ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:translate-x-0 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transform-none motion-reduce:transition-none"
                   weight="bold"
                 />
               </span>
               <span className="block max-h-0 overflow-hidden pl-[52px] opacity-0 transition-all duration-[400ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:max-h-24 group-hover:opacity-100 group-focus-visible:max-h-24 group-focus-visible:opacity-100 motion-reduce:transition-none">
-                <span className="block max-w-[560px] pt-3 font-mono text-[13px] leading-relaxed text-[#948F85] light:text-neutral-500">
+                <span className="block max-w-[560px] pt-3 font-mono text-[13px] leading-relaxed text-ink-muted">
                   {project.outcome}
                 </span>
                 {project.badge && (
-                  <span className="block pt-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-[#4ade80]">
+                  <span className="block pt-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-ok">
                     {project.badge}
                   </span>
                 )}
@@ -460,19 +463,28 @@ export default function SelectedWork() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed right-0 top-0 z-50 h-full w-full md:w-[48vw] md:min-w-[560px] bg-[#141413] light:bg-[#fafafa] border-l border-[#948F85]/15 light:border-neutral-200 overflow-y-auto"
+              className="fixed right-0 top-0 z-50 h-full w-full md:w-[48vw] md:min-w-[560px] bg-surface border-l border-line overflow-y-auto"
             >
               <button
                 ref={closeButtonRef}
                 onClick={close}
                 aria-label="Fechar painel"
-                className="fixed md:absolute top-3 right-3 z-20 flex size-11 cursor-pointer items-center justify-center text-[#b497cf] light:text-[#8a6bab] hover:text-[#F3E6C4] light:hover:text-neutral-900 transition-colors"
+                className="fixed md:absolute top-3 right-3 z-20 flex size-11 cursor-pointer items-center justify-center text-brand hover:text-ink transition-colors"
               >
                 <X className="size-5" weight="bold" />
               </button>
 
               {active.terminalHeader ? (
-                <div className="relative h-56 w-full overflow-hidden border-b border-[#948F85]/15 light:border-neutral-200">
+                // ponytail: bg-[#141413] here is intentional and NOT theme-aware
+                // — this header is a media block (WebGL starfield + a dark
+                // scrim for caption legibility), same pattern as a photo/video
+                // caption staying dark regardless of the surrounding UI theme.
+                // Without an explicit bg here, Galaxy's transparent canvas and
+                // the gradient below it showed whatever was behind the fixed
+                // panel — meaning light theme bled a near-black gradient over
+                // a white panel, reading as noisy grey static instead of stars.
+                <div className="relative h-56 w-full overflow-hidden border-b border-line bg-[#141413]">
+                  {!reducedMotion && (
                   <Galaxy
                     className="absolute inset-0"
                     color="#b497cf"
@@ -491,6 +503,7 @@ export default function SelectedWork() {
                     mouseRepulsion
                     transparent
                   />
+                  )}
                   {/* pointer-events-none — these sit on top of the Galaxy
                       canvas purely for the gradient/title legibility, and
                       would otherwise swallow the mousemove events Galaxy
@@ -503,14 +516,16 @@ export default function SelectedWork() {
                     >
                       Project
                     </span>
+                    {/* Not text-ink: this caption sits on the always-dark
+                        media block above, so it stays cream in both themes. */}
                     <h2 className="text-2xl font-bold tracking-tight text-[#F3E6C4] mt-1">
                       {active.title}
                     </h2>
                   </div>
                 </div>
               ) : (
-                <div className="sticky top-0 z-10 flex items-center justify-between px-8 py-6 border-b border-[#948F85]/15 light:border-neutral-200 bg-[#141413]/95 light:bg-[#fafafa]/95 backdrop-blur-sm">
-                  <span className="font-mono text-xs uppercase tracking-[0.2em] text-[#b497cf] light:text-[#8a6bab]">
+                <div className="sticky top-0 z-10 flex items-center justify-between px-8 py-6 border-b border-line bg-surface/95 backdrop-blur-sm">
+                  <span className="font-mono text-xs uppercase tracking-[0.2em] text-brand">
                     Project
                   </span>
                 </div>
@@ -525,7 +540,7 @@ export default function SelectedWork() {
                     href={active.href}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex min-h-11 items-center gap-1.5 border border-[#b497cf]/40 px-4 text-[#b497cf] light:text-[#8a6bab] hover:text-[#F3E6C4] hover:border-[#F3E6C4]/50 light:hover:text-neutral-900 transition-colors"
+                    className="flex min-h-11 items-center gap-1.5 border border-brand/40 px-4 text-brand hover:text-ink hover:border-ink/50 transition-colors"
                   >
                     Live <ArrowUpRight className="size-3" weight="bold" />
                   </a>
@@ -533,7 +548,7 @@ export default function SelectedWork() {
                     href={active.repo}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex min-h-11 items-center gap-1.5 border border-[#948F85]/25 px-4 text-[#948F85] hover:text-[#F3E6C4] hover:border-[#F3E6C4]/50 light:text-neutral-500 light:hover:text-neutral-900 transition-colors"
+                    className="flex min-h-11 items-center gap-1.5 border border-line-strong px-4 text-ink-muted hover:text-ink hover:border-ink/50 transition-colors"
                   >
                     Source <ArrowUpRight className="size-3" weight="bold" />
                   </a>
@@ -541,24 +556,19 @@ export default function SelectedWork() {
 
                 <div>
                   {!active.terminalHeader && (
-                    <h2 className="text-2xl font-bold tracking-tight text-[#F3E6C4] light:text-neutral-900 mb-3">
+                    <h2 className="text-2xl font-bold tracking-tight text-ink mb-3">
                       {active.title}
                     </h2>
                   )}
-                  <p className="text-[13px] leading-relaxed text-[#948F85] light:text-neutral-600">
+                  <p className="text-[13px] leading-relaxed text-ink-muted">
                     {active.description}
                   </p>
                 </div>
 
-                {/* ponytail: two device mocks side by side instead of one flat
-                    screenshot — Safari (desktop) wider on the left, iPhone
-                    (mobile) narrower on the right, both height-matched so
-                    neither towers over the other (their native aspect ratios
-                    are wildly different: Safari ~1.6:1, iPhone ~0.49:1).
-                    Both currently render the same source image as a
-                    placeholder — real mobile-viewport screenshots per
-                    project are still TODO (see project data/screenshotSrc). */}
-                <div className="flex w-full items-center justify-center gap-12 overflow-x-auto py-2">
+                {/* ponytail: Safari + iPhone mocks height-matched (native aspect
+                    ratios differ a lot), height and gap shrink on narrow
+                    viewports. `!w-auto` overrides the component's own w-full. */}
+                <div className="flex w-full items-center justify-center gap-4 sm:gap-8 md:gap-12 overflow-x-auto py-2">
                   <button
                     type="button"
                     onClick={(e) => {
@@ -566,13 +576,12 @@ export default function SelectedWork() {
                       setLightboxOpen(true);
                     }}
                     aria-label={`Ampliar preview desktop — ${active.title}`}
-                    className="group/shot shrink-0 focus-visible:outline-2 focus-visible:outline-[#b497cf]"
+                    className="group/shot shrink-0 focus-visible:outline-2 focus-visible:outline-brand"
                   >
                     <Safari
                       url={hostLabel(active.href)}
                       imageSrc={active.screenshotSrc}
-                      style={{ height: "14rem", width: "auto" }}
-                      className="transition-opacity group-hover/shot:opacity-80"
+                      className="!w-auto h-28 sm:h-36 md:h-56 transition-opacity group-hover/shot:opacity-80"
                     />
                   </button>
                   <button
@@ -582,12 +591,11 @@ export default function SelectedWork() {
                       setLightboxOpen(true);
                     }}
                     aria-label={`Ampliar preview mobile — ${active.title}`}
-                    className="group/shot shrink-0 focus-visible:outline-2 focus-visible:outline-[#b497cf]"
+                    className="group/shot shrink-0 focus-visible:outline-2 focus-visible:outline-brand"
                   >
                     <Iphone
                       src={active.screenshotMobileSrc ?? active.screenshotSrc}
-                      style={{ height: "14rem", width: "auto" }}
-                      className="transition-opacity group-hover/shot:opacity-80"
+                      className="!w-auto h-28 sm:h-36 md:h-56 transition-opacity group-hover/shot:opacity-80"
                     />
                   </button>
                 </div>
@@ -636,7 +644,7 @@ export default function SelectedWork() {
               ref={lightboxCloseRef}
               onClick={closeLightbox}
               aria-label="Fechar screenshot ampliado"
-              className="fixed top-3 right-3 md:top-6 md:right-6 flex size-11 items-center justify-center bg-[#141413]/70 border border-[#948F85]/25 text-[#F3E6C4] hover:bg-[#141413]/95 hover:border-[#F3E6C4]/50 transition-colors"
+              className="fixed top-3 right-3 md:top-6 md:right-6 flex size-11 items-center justify-center bg-surface/70 border border-line-strong text-ink hover:bg-surface/95 hover:border-ink/50 transition-colors"
             >
               <X className="size-5" weight="bold" />
             </button>

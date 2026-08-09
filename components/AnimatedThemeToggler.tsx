@@ -73,7 +73,7 @@ export function AnimatedThemeToggler({
       onClick={toggleTheme}
       aria-label="Toggle theme"
       className={cn(
-        "text-[#948F85] hover:text-[#F3E6C4] light:text-neutral-500 light:hover:text-neutral-900 transition-colors cursor-pointer",
+        "text-ink-muted hover:text-ink transition-colors cursor-pointer",
         className,
       )}
     >
