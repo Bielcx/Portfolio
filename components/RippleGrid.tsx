@@ -112,8 +112,15 @@ void main() {
     }
 
     float finalFade = ddd * vignette;
-    float alpha = length(color) * finalFade * opacity;
-    gl_FragColor = vec4(color * t * finalFade * opacity, alpha);
+    // Alpha has to track the grid intensity per channel, not length(color):
+    // the color vector is neutral, so its length is ~1.73x each channel, which
+    // made the composited line always darker than the gridColor actually asked
+    // for (pure white landed around mid grey). On the dark surface that still
+    // reads as a light line so it went unnoticed, but on the light theme it
+    // turned the grid into grey lines that washed the warm paper out.
+    float intensity = clamp(max(color.r, max(color.g, color.b)), 0.0, 1.0);
+    float alpha = intensity * finalFade * opacity;
+    gl_FragColor = vec4(t * intensity * finalFade * opacity, alpha);
 }`;
 
 // Accepts shorthand (#000) as well as full (#000000) hex. The stock React Bits
