@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import dynamic from "next/dynamic";
+import { useRef } from "react";
+import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
 import {
   EnvelopeSimple,
   GithubLogo,
   LinkedinLogo,
 } from "@phosphor-icons/react";
-
-// ponytail: three.js + postprocessing are real weight — keep them out of the
-// initial bundle and only fetch on the client, same pattern as FaultyTerminal.
-const PixelBlast = dynamic(() => import("./PixelBlast"), { ssr: false });
 
 type Profile = {
   name: string;
@@ -22,7 +18,6 @@ type Profile = {
 
 export default function HeroSection({ profile }: { profile: Profile }) {
   const containerRef = useRef<HTMLElement>(null);
-  const [reducedMotion, setReducedMotion] = useState(true);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -32,16 +27,6 @@ export default function HeroSection({ profile }: { profile: Profile }) {
   const scale = useTransform(scrollYProgress, [0, 1], [1, 1.06]);
   const opacity = useTransform(scrollYProgress, [0, 0.7], [1, 0]);
   const y = useTransform(scrollYProgress, [0, 1], [0, -40]);
-
-  // ponytail: don't mount the WebGL canvas at all for users who asked for
-  // reduced motion — not just pausing the animation, skipping it entirely.
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReducedMotion(mq.matches);
-    const onChange = (e: MediaQueryListEvent) => setReducedMotion(e.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
 
   return (
     <section
@@ -90,8 +75,8 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             transition={{ duration: 0.4, delay: 0.4 }}
             className="font-mono text-sm text-ink-muted max-w-[420px] leading-7 mb-8"
           >
-            Construo produtos web do banco ao deploy — React, Next.js e
-            Node.js, para clientes reais no Brasil e projetos open source.
+            React, Next.js e Node.js aplicados em produção — de produtos
+            para clientes reais a contribuições em projetos open source.
           </motion.p>
 
           <motion.div
@@ -131,22 +116,18 @@ export default function HeroSection({ profile }: { profile: Profile }) {
           transition={{ duration: 0.6, delay: 0.05 }}
           className="hidden shrink-0 md:block"
         >
-          <div className="relative w-[340px] h-[340px] overflow-hidden">
-            {!reducedMotion && (
-              <PixelBlast
-                variant="square"
-                pixelSize={3}
-                color="#B497CF"
-                patternScale={2.75}
-                patternDensity={1}
-                enableRipples
-                rippleSpeed={0.4}
-                rippleThickness={0.12}
-                rippleIntensityScale={1.5}
-                edgeFade={0.25}
-                transparent
-              />
-            )}
+          {/* Same 340x340 box PixelBlast occupied, so the hero's right edge
+              and vertical centering stay put. object-contain letterboxes the
+              portrait render inside it instead of cropping his head off. */}
+          <div className="relative size-[340px]">
+            <Image
+              src="/biel-avatar.png"
+              alt=""
+              fill
+              priority
+              sizes="340px"
+              className="object-contain"
+            />
           </div>
         </motion.div>
       </motion.div>

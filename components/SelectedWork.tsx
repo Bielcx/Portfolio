@@ -460,11 +460,14 @@ export default function SelectedWork() {
               role="dialog"
               aria-modal="true"
               aria-label={`Projeto: ${active.title}`}
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
+              // Centering lives in the motion transform (x/y -50%) because
+              // motion's inline transform would override Tailwind translate
+              // classes anyway.
+              initial={{ opacity: 0, scale: 0.96, x: "-50%", y: "-48%" }}
+              animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
+              exit={{ opacity: 0, scale: 0.96, x: "-50%", y: "-48%" }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="fixed right-0 top-0 z-50 h-full w-full md:w-[48vw] md:min-w-[560px] bg-surface border-l border-line overflow-y-auto"
+              className="fixed left-1/2 top-1/2 z-50 h-full w-full md:h-[min(90vh,860px)] md:w-[min(90vw,720px)] bg-surface border border-line overflow-y-auto scrollbar-slim"
             >
               <button
                 ref={closeButtonRef}
@@ -481,7 +484,7 @@ export default function SelectedWork() {
                 // panel and reads as grey static), but it follows the panel's
                 // own surface so the stars float on the modal background in
                 // both themes.
-                <div className="relative h-56 w-full overflow-hidden border-b border-line bg-surface">
+                <div className="relative h-[150px] w-full overflow-hidden border-b border-line bg-surface">
                   {!reducedMotion && (
                   <Galaxy
                     className="absolute inset-0"

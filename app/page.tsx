@@ -2,6 +2,7 @@ import HeroSection from "@/components/HeroSection";
 import SelectedWork from "@/components/SelectedWork";
 import { PortfolioWrapper } from "@/components/PortfolioWrapper";
 import { AnimatedThemeToggler } from "@/components/AnimatedThemeToggler";
+import RippleGrid from "@/components/RippleGrid";
 
 const profile = {
   name: "Gabriel Cavalcanti",
@@ -17,16 +18,32 @@ export default function Home() {
   return (
     <PortfolioWrapper>
       <main className="relative w-full min-h-screen bg-surface text-ink">
+        {/* Background stack — fixed so the grid stays viewport-sized instead
+            of stretching over the full page height as you scroll. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 overflow-hidden"
+          className="pointer-events-none fixed inset-0 overflow-hidden"
         >
+          <RippleGrid
+            className="absolute inset-0"
+            colorVar="--grid"
+            rippleIntensity={0.03}
+            gridSize={20}
+            gridThickness={15}
+            fadeDistance={3.0}
+            vignetteStrength={12}
+            glowIntensity={0.1}
+            opacity={0.15}
+            gridRotation={0}
+            mouseInteraction
+            mouseInteractionRadius={0.8}
+          />
           <div className="grain absolute inset-0 opacity-25 mix-blend-overlay" />
         </div>
 
         <AnimatedThemeToggler className="fixed top-6 right-6 z-50" />
 
-        <div className="relative">
+        <div className="relative z-10">
           <HeroSection profile={profile} />
 
           <SelectedWork />
