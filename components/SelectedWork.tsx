@@ -360,10 +360,15 @@ export default function SelectedWork() {
     }
   }, [lightboxOpen]);
 
+  // `modal-open` on the body is what hides the theme toggle while the panel is
+  // up (rule in globals.css) — the toggle is a sibling of this component under
+  // the RSC page, so a body class is the cheapest channel between them.
   useEffect(() => {
     document.body.style.overflow = active ? "hidden" : "";
+    document.body.classList.toggle("modal-open", Boolean(active));
     return () => {
       document.body.style.overflow = "";
+      document.body.classList.remove("modal-open");
     };
   }, [active]);
 

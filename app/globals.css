@@ -231,6 +231,16 @@
   }
 }
 
+/* The project panel is modal, so the theme toggle goes away while it's open.
+   On mobile the panel's close button lands on the exact same corner, and the
+   panel samples the theme once when it opens (see SelectedWork), so toggling
+   mid-panel would leave its Galaxy header rendering the previous theme.
+   Unlayered on purpose: it has to win over the Tailwind utilities on the
+   button itself. */
+body.modal-open .theme-toggle {
+  display: none;
+}
+
 /* Border beam (magicui-style, CSS-only): an oversized conic-gradient spins
    behind a mask that only reveals the card's 1px border ring. `rotate` is
    GPU-composited, unlike offset-distance (main thread, stuttered in dev). */

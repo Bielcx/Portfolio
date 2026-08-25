@@ -41,7 +41,7 @@ export default function Home() {
           <div className="grain absolute inset-0 opacity-25 mix-blend-overlay" />
         </div>
 
-        <AnimatedThemeToggler className="fixed top-6 right-6 z-50" />
+        <AnimatedThemeToggler className="theme-toggle fixed top-6 right-6 z-50" />
 
         <div className="relative z-10">
           <HeroSection profile={profile} />
