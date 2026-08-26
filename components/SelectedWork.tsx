@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { ArrowUpRight, X } from "@phosphor-icons/react";
+import { ArrowUpRight, CaretRight, X } from "@phosphor-icons/react";
 import { Safari } from "./ui/safari";
 import { Iphone } from "./ui/iphone";
 
@@ -231,17 +231,26 @@ function ContributionsSection({
   const total = stats?.total ?? items.length;
   const featured = items.filter((p) => p.featured);
 
+  // ponytail: native <details> instead of a useState toggle — the browser owns
+  // the open/closed state, the keyboard handling and the aria-expanded, and the
+  // collapsed PR links drop out of the tab order on their own.
   return (
-    <div>
-      <div className="flex items-baseline justify-between mb-4">
-        <span className="font-mono text-xs uppercase tracking-[0.2em] text-ok">
+    <details className="group/contrib">
+      <summary className="flex cursor-pointer list-none items-baseline justify-between gap-4 py-1 [&::-webkit-details-marker]:hidden">
+        <span className="flex items-center gap-2 font-mono text-xs uppercase tracking-[0.2em] text-ok">
+          <CaretRight
+            aria-hidden
+            weight="bold"
+            className="size-3 shrink-0 transition-transform duration-200 group-open/contrib:rotate-90 motion-reduce:transition-none"
+          />
           Contributions
         </span>
         <span className="font-mono text-[11px] text-ink-faint">
           {merged} merged · {open} open · {closed} closed
         </span>
-      </div>
-      <div className="divide-y divide-line border border-line">
+      </summary>
+
+      <div className="mt-4 divide-y divide-line border border-line">
         {featured.map((pr) => (
           <a
             key={pr.number}
@@ -272,7 +281,7 @@ function ContributionsSection({
       >
         Ver todas as {total} PRs no GitHub <ArrowUpRight className="size-3" weight="bold" />
       </a>
-    </div>
+    </details>
   );
 }
 
@@ -327,8 +336,11 @@ export default function SelectedWork() {
       if (e.key === "Tab") {
         const scope = lightboxOpen ? lightboxRef.current : panelRef.current;
         if (!scope) return;
+        // `summary` is focusable but matches none of the usual selectors — left
+        // out, the Contributions toggle would fall outside the trap and Tab
+        // could walk past the last element and escape the panel.
         const focusable = scope.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+          'a[href], button:not([disabled]), summary, [tabindex]:not([tabindex="-1"])'
         );
         if (focusable.length === 0) return;
         const list = Array.from(focusable);
@@ -397,19 +409,22 @@ export default function SelectedWork() {
           </p>
         </div>
 
-        <div className="border-t border-line">
+        {/* Dividers ride on --ink-faint, the same token as the year on each
+            row, so the line and the year read as one quiet layer. */}
+        <div className="border-t border-ink-faint">
           {projects.map((project, i) => (
             <button
               key={project.slug}
               onClick={(e) => openProject(project, e.currentTarget)}
-              className="group block w-full cursor-pointer border-b border-line py-7 text-left focus-visible:outline-2 focus-visible:outline-brand"
+              className="group block w-full cursor-pointer border-b border-ink-faint py-7 text-left focus-visible:outline-2 focus-visible:outline-brand"
             >
               <span className="flex items-start gap-6">
-                <span className="w-7 shrink-0 pt-3.5 font-mono text-xs text-ink-faint transition-colors group-hover:text-brand group-focus-visible:text-brand">
+                <span className="w-7 shrink-0 pt-3.5 font-mono text-xs text-ink-faint transition-colors group-hover:text-ok group-focus-visible:text-ok">
                   0{i + 1}
                 </span>
                 <span className="block flex-1 transition-transform duration-[350ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:translate-x-3 group-focus-visible:translate-x-3 motion-reduce:transform-none motion-reduce:transition-none">
-                  <span className="text-[clamp(28px,3vw,44px)] font-extrabold uppercase leading-[1.1] tracking-[-0.02em] text-ink transition-colors group-hover:text-brand group-focus-visible:text-brand">
+                  {/* Hover lands on --ok, the same green as the PROD/WIP tags. */}
+                  <span className="text-[clamp(28px,3vw,44px)] font-extrabold uppercase leading-[1.1] tracking-[-0.02em] text-ink transition-colors group-hover:text-ok group-focus-visible:text-ok">
                     {project.title}
                   </span>
                 </span>

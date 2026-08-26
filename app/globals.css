@@ -65,7 +65,10 @@
   --ink-faint: #6e6a62;
   --line: #272624;
   --line-strong: #343330;
-  --brand: #b497cf;
+  /* Accent do tema. Dark = verde, light = lavanda (ver bloco .light). --brand e
+     --ok carregam o mesmo hex dentro de cada tema hoje; os dois nomes seguem
+     existindo para poderem divergir depois, não por engano. */
+  --brand: #4ade80;
   --ok: #4ade80;
   /* RippleGrid background lines — split per theme so each can be tuned against
      its own background. Black here reads as a subtle darkening of the surface
@@ -129,12 +132,39 @@
   --ink-faint: #746c61;
   --line: #e2dbcc;
   --line-strong: #d6cdba;
+  /* Accent do light. Efeito colateral aceito: com --brand e --ok no mesmo hex,
+     em statusStyles (SelectedWork) os PRs merged e open perdem a distinção por
+     cor — o texto do status ao lado continua diferenciando. */
   --brand: #6b4fa0;
-  --ok: #1f7a47;
+  --ok: #6b4fa0;
   --grid: #ffffff;
 
   --background: #faf7f0;
   --foreground: #1c1b18;
+}
+
+/* Bloco de contato: é um terminal, então fica escuro nos dois temas. Em vez de
+   hex hardcoded nos filhos, redeclara a paleta dark no escopo do bloco — os
+   utilitários de token usados lá dentro (text-ok, text-ink-muted, text-brand,
+   border-line-strong…) continuam valendo sem precisar de nenhuma alteração.
+   Só funciona porque o @theme inline emite `var(--ok)` e não o valor literal. */
+.terminal-block {
+  --surface-2: #111110;
+  --ink: #f3e6c4;
+  --ink-muted: #948f85;
+  --ink-faint: #6e6a62;
+  --line: #272624;
+  --line-strong: #343330;
+  --brand: #4ade80;
+  --ok: #4ade80;
+}
+
+/* No light o accent é lavanda, mas o bloco segue escuro — então usa a lavanda
+   clara (#B497CF, a antiga do dark), e não a #6B4FA0 do light: aquela é feita
+   para papel e sobre #111110 dá 2,9:1, reprovando no AA. Esta dá 7,2:1. */
+.light .terminal-block {
+  --brand: #b497cf;
+  --ok: #b497cf;
 }
 
 /* Animated theme toggler — the circle reveal animates ::view-transition-new,

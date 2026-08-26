@@ -56,12 +56,12 @@ export default function Home() {
               Contact
             </p>
 
-            <div className="border border-line-strong bg-surface-2 p-8 font-mono text-sm leading-loose text-ink-muted">
+            <div className="terminal-block border border-line-strong bg-surface-2 p-8 font-mono text-sm leading-loose text-ink-muted">
               <p>
                 <span className="text-ok">$</span> gabriel contact --new-project
               </p>
               <p className="text-ink-faint">
-                Respondo projetos sérios de desenvolvimento web, mobile e consultoria técnica.
+                Tem um projeto em mente? Vamos conversar.
               </p>
               <p className="mt-4">
                 <span className="text-ok">→</span>{" "}

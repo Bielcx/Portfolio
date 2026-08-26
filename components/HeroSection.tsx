@@ -75,8 +75,8 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             transition={{ duration: 0.4, delay: 0.4 }}
             className="font-mono text-sm text-ink-muted max-w-[420px] leading-7 mb-8"
           >
-            React, Next.js e Node.js aplicados em produção — de produtos
-            para clientes reais a contribuições em projetos open source.
+            Front, back e deploy em produção — de produtos para clientes
+            reais a contribuições em projetos open source.
           </motion.p>
 
           <motion.div
@@ -89,23 +89,32 @@ export default function HeroSection({ profile }: { profile: Profile }) {
               href={profile.github}
               target="_blank"
               rel="noreferrer"
-              className="flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
+              className="group flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
             >
-              <GithubLogo size={14} weight="bold" className="!text-brand" /> GitHub
+              <GithubLogo size={14} weight="bold" className="!text-brand" />
+              <span className="relative after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-brand after:transition-all after:duration-300 group-hover:after:w-full">
+                GitHub
+              </span>
             </a>
             <a
               href={profile.linkedin}
               target="_blank"
               rel="noreferrer"
-              className="flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
+              className="group flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
             >
-              <LinkedinLogo size={14} weight="bold" className="!text-brand" /> LinkedIn
+              <LinkedinLogo size={14} weight="bold" className="!text-brand" />
+              <span className="relative after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-brand after:transition-all after:duration-300 group-hover:after:w-full">
+                LinkedIn
+              </span>
             </a>
             <a
               href={`mailto:${profile.email}`}
-              className="flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
+              className="group flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
             >
-              <EnvelopeSimple size={14} weight="bold" className="!text-brand" /> Email
+              <EnvelopeSimple size={14} weight="bold" className="!text-brand" />
+              <span className="relative after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-brand after:transition-all after:duration-300 group-hover:after:w-full">
+                Email
+              </span>
             </a>
           </motion.div>
         </div>
