@@ -269,9 +269,17 @@ export default function RippleGrid({
     const mesh = new Mesh(gl, { geometry, program });
     drawRef.current = () => renderer.render({ scene: mesh });
 
+    let lastW = 0;
+    let lastH = 0;
     const resize = () => {
       const { clientWidth: w, clientHeight: h } = container;
+      // Ignora medida zerada (acontece enquanto o splash do TerminalIntro está
+      // na frente) e chamadas que não mudam nada — reconstruir o buffer à toa
+      // custa caro e faz o grid piscar.
       if (w === 0 || h === 0) return;
+      if (w === lastW && h === lastH) return;
+      lastW = w;
+      lastH = h;
       renderer.setSize(w, h);
       uniforms.iResolution.value = [w, h];
     };

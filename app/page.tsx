@@ -18,11 +18,15 @@ export default function Home() {
   return (
     <PortfolioWrapper>
       <main className="relative w-full min-h-screen bg-surface text-ink">
-        {/* Background stack — fixed so the grid stays viewport-sized instead
-            of stretching over the full page height as you scroll. */}
+        {/* Background stack — fixed para o grid ficar do tamanho da viewport em
+            vez de esticar pela altura toda da página. A altura é `100lvh`, e
+            não `inset-0`, de propósito: no Safari do iOS a barra de endereço
+            recolhe ao rolar e a viewport cresce de uma vez, o que redimensiona
+            o canvas e faz o grid reescalar num salto bem visível. `lvh` é a
+            altura com a barra recolhida, constante durante a rolagem. */}
         <div
           aria-hidden
-          className="pointer-events-none fixed inset-0 overflow-hidden"
+          className="pointer-events-none fixed inset-x-0 top-0 h-[100lvh] overflow-hidden"
         >
           <RippleGrid
             className="absolute inset-0"
