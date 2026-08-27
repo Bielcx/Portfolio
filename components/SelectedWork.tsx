@@ -298,8 +298,12 @@ export default function SelectedWork() {
   // the panel's own open/close state since it layers on top of it.
   // Guarda a imagem clicada, não um booleano: com o booleano o lightbox sempre
   // renderizava o print desktop, então clicar no mockup do celular abria a
-  // versão errada. `null` = fechado.
-  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
+  // versão errada. `portrait` vem junto porque o retrato precisa de um teto de
+  // altura próprio (ver o img abaixo). `null` = fechado.
+  const [lightbox, setLightbox] = useState<{
+    src: string;
+    portrait: boolean;
+  } | null>(null);
   const lightboxRef = useRef<HTMLDivElement>(null);
   const lightboxCloseRef = useRef<HTMLButtonElement>(null);
   const screenshotTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -319,7 +323,7 @@ export default function SelectedWork() {
   );
 
   const close = useCallback(() => setActive(null), []);
-  const closeLightbox = useCallback(() => setLightboxSrc(null), []);
+  const closeLightbox = useCallback(() => setLightbox(null), []);
 
   // Esc closes; Tab is trapped inside whichever layer is on top (basic focus
   // trap — dialog semantics without pulling in a whole a11y library).
@@ -328,7 +332,7 @@ export default function SelectedWork() {
       if (!active) return;
 
       if (e.key === "Escape") {
-        if (lightboxSrc) {
+        if (lightbox) {
           closeLightbox();
           return;
         }
@@ -337,7 +341,7 @@ export default function SelectedWork() {
       }
 
       if (e.key === "Tab") {
-        const scope = lightboxSrc ? lightboxRef.current : panelRef.current;
+        const scope = lightbox ? lightboxRef.current : panelRef.current;
         if (!scope) return;
         // `summary` is focusable but matches none of the usual selectors — left
         // out, the Contributions toggle would fall outside the trap and Tab
@@ -360,12 +364,12 @@ export default function SelectedWork() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active, close, lightboxSrc, closeLightbox]);
+  }, [active, close, lightbox, closeLightbox]);
 
   // Move focus into the lightbox on open, back to the screenshot button on
   // close — same pattern as the panel's own focus management below.
   useEffect(() => {
-    if (lightboxSrc) {
+    if (lightbox) {
       const raf = requestAnimationFrame(() => lightboxCloseRef.current?.focus());
       return () => cancelAnimationFrame(raf);
     }
@@ -373,7 +377,7 @@ export default function SelectedWork() {
       screenshotTriggerRef.current.focus();
       screenshotTriggerRef.current = null;
     }
-  }, [lightboxSrc]);
+  }, [lightbox]);
 
   // `modal-open` on the body is what hides the theme toggle while the panel is
   // up (rule in globals.css) — the toggle is a sibling of this component under
@@ -595,7 +599,10 @@ export default function SelectedWork() {
                     type="button"
                     onClick={(e) => {
                       screenshotTriggerRef.current = e.currentTarget;
-                      setLightboxSrc(active.screenshotSrc);
+                      setLightbox({
+                        src: active.screenshotSrc,
+                        portrait: false,
+                      });
                     }}
                     aria-label={`Ampliar preview desktop — ${active.title}`}
                     className="group/shot shrink-0 focus-visible:outline-2 focus-visible:outline-brand"
@@ -611,10 +618,12 @@ export default function SelectedWork() {
                     onClick={(e) => {
                       screenshotTriggerRef.current = e.currentTarget;
                       // Mesmo fallback do <Iphone> abaixo: projeto sem captura
-                      // mobile própria abre a desktop, e não uma imagem quebrada.
-                      setLightboxSrc(
-                        active.screenshotMobileSrc ?? active.screenshotSrc
-                      );
+                      // mobile própria abre a desktop, e não uma imagem quebrada
+                      // — e nesse caso ela não é retrato, então não leva o teto.
+                      setLightbox({
+                        src: active.screenshotMobileSrc ?? active.screenshotSrc,
+                        portrait: Boolean(active.screenshotMobileSrc),
+                      });
                     }}
                     aria-label={`Ampliar preview mobile — ${active.title}`}
                     className="group/shot shrink-0 focus-visible:outline-2 focus-visible:outline-brand"
@@ -646,7 +655,7 @@ export default function SelectedWork() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {active && lightboxSrc && (
+        {active && lightbox && (
           <motion.div
             key="lightbox"
             ref={lightboxRef}
@@ -660,11 +669,19 @@ export default function SelectedWork() {
             onClick={closeLightbox}
             className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 p-6 md:p-16"
           >
+            {/* O retrato leva um teto de 65vh. Os prints desktop têm aspect
+                ~1,7 e são limitados pela largura; o mobile tem ~0,46 e seria
+                limitado pela altura, ocupando a janela inteira — num monitor
+                1080p o celular abria com ~950px de altura, bem maior que o
+                aparelho real. Com o teto ele fica em ~74% da altura do desktop,
+                que é mais ou menos a proporção física entre os dois. */}
             <img
-              src={lightboxSrc}
+              src={lightbox.src}
               alt={`${active.title} — screenshot ampliado`}
               onClick={(e) => e.stopPropagation()}
-              className="max-h-full max-w-full object-contain"
+              className={`max-w-full object-contain ${
+                lightbox.portrait ? "max-h-[65vh]" : "max-h-full"
+              }`}
             />
             {/* Sem caixa nem borda — só o ícone, como o X do painel. O creme é
                 hardcoded (exceção de bloco sempre escuro, ver CLAUDE.md): o
