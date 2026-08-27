@@ -296,7 +296,10 @@ export default function SelectedWork() {
 
   // Lightbox — click a project screenshot to see it uncropped. Separate from
   // the panel's own open/close state since it layers on top of it.
-  const [lightboxOpen, setLightboxOpen] = useState(false);
+  // Guarda a imagem clicada, não um booleano: com o booleano o lightbox sempre
+  // renderizava o print desktop, então clicar no mockup do celular abria a
+  // versão errada. `null` = fechado.
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
   const lightboxRef = useRef<HTMLDivElement>(null);
   const lightboxCloseRef = useRef<HTMLButtonElement>(null);
   const screenshotTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -316,7 +319,7 @@ export default function SelectedWork() {
   );
 
   const close = useCallback(() => setActive(null), []);
-  const closeLightbox = useCallback(() => setLightboxOpen(false), []);
+  const closeLightbox = useCallback(() => setLightboxSrc(null), []);
 
   // Esc closes; Tab is trapped inside whichever layer is on top (basic focus
   // trap — dialog semantics without pulling in a whole a11y library).
@@ -325,7 +328,7 @@ export default function SelectedWork() {
       if (!active) return;
 
       if (e.key === "Escape") {
-        if (lightboxOpen) {
+        if (lightboxSrc) {
           closeLightbox();
           return;
         }
@@ -334,7 +337,7 @@ export default function SelectedWork() {
       }
 
       if (e.key === "Tab") {
-        const scope = lightboxOpen ? lightboxRef.current : panelRef.current;
+        const scope = lightboxSrc ? lightboxRef.current : panelRef.current;
         if (!scope) return;
         // `summary` is focusable but matches none of the usual selectors — left
         // out, the Contributions toggle would fall outside the trap and Tab
@@ -357,12 +360,12 @@ export default function SelectedWork() {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [active, close, lightboxOpen, closeLightbox]);
+  }, [active, close, lightboxSrc, closeLightbox]);
 
   // Move focus into the lightbox on open, back to the screenshot button on
   // close — same pattern as the panel's own focus management below.
   useEffect(() => {
-    if (lightboxOpen) {
+    if (lightboxSrc) {
       const raf = requestAnimationFrame(() => lightboxCloseRef.current?.focus());
       return () => cancelAnimationFrame(raf);
     }
@@ -370,7 +373,7 @@ export default function SelectedWork() {
       screenshotTriggerRef.current.focus();
       screenshotTriggerRef.current = null;
     }
-  }, [lightboxOpen]);
+  }, [lightboxSrc]);
 
   // `modal-open` on the body is what hides the theme toggle while the panel is
   // up (rule in globals.css) — the toggle is a sibling of this component under
@@ -592,7 +595,7 @@ export default function SelectedWork() {
                     type="button"
                     onClick={(e) => {
                       screenshotTriggerRef.current = e.currentTarget;
-                      setLightboxOpen(true);
+                      setLightboxSrc(active.screenshotSrc);
                     }}
                     aria-label={`Ampliar preview desktop — ${active.title}`}
                     className="group/shot shrink-0 focus-visible:outline-2 focus-visible:outline-brand"
@@ -607,7 +610,11 @@ export default function SelectedWork() {
                     type="button"
                     onClick={(e) => {
                       screenshotTriggerRef.current = e.currentTarget;
-                      setLightboxOpen(true);
+                      // Mesmo fallback do <Iphone> abaixo: projeto sem captura
+                      // mobile própria abre a desktop, e não uma imagem quebrada.
+                      setLightboxSrc(
+                        active.screenshotMobileSrc ?? active.screenshotSrc
+                      );
                     }}
                     aria-label={`Ampliar preview mobile — ${active.title}`}
                     className="group/shot shrink-0 focus-visible:outline-2 focus-visible:outline-brand"
@@ -639,7 +646,7 @@ export default function SelectedWork() {
       </AnimatePresence>
 
       <AnimatePresence>
-        {active && lightboxOpen && (
+        {active && lightboxSrc && (
           <motion.div
             key="lightbox"
             ref={lightboxRef}
@@ -654,7 +661,7 @@ export default function SelectedWork() {
             className="fixed inset-0 z-[60] flex items-center justify-center bg-black/85 p-6 md:p-16"
           >
             <img
-              src={active.screenshotSrc}
+              src={lightboxSrc}
               alt={`${active.title} — screenshot ampliado`}
               onClick={(e) => e.stopPropagation()}
               className="max-h-full max-w-full object-contain"
