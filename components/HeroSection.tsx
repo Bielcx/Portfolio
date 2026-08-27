@@ -34,11 +34,11 @@ export default function HeroSection({ profile }: { profile: Profile }) {
       id="home"
       // pt menor no mobile: os 160px do pt-40 comiam ~24% da altura útil do
       // iPhone (≈662px depois das barras do Safari) antes de qualquer conteúdo.
-      className="relative w-full max-w-5xl mx-auto px-8 pt-16 pb-16 md:pt-40"
+      className="relative w-full max-w-5xl mx-auto px-8 pt-12 pb-16 md:pt-40"
     >
       <motion.div
         style={{ scale, opacity, y }}
-        className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between md:gap-12"
+        className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between md:gap-12"
       >
         <div className="flex flex-col">
           <motion.p
@@ -128,11 +128,15 @@ export default function HeroSection({ profile }: { profile: Profile }) {
           className="shrink-0 self-center md:self-auto"
         >
           {/* Desktop mantém a caixa 340x340 que o PixelBlast ocupava, para a
-              borda direita e a centralização vertical do hero não mudarem. No
-              mobile a figura vai abaixo dos links, em 180x260 — o render é 2:3,
-              então com object-contain isso dá um corpo de ~173x260, que cabe no
-              espaço livre da primeira tela e ainda lê bem a 393px de largura. */}
-          <div className="relative h-[260px] w-[180px] md:size-[340px]">
+              borda direita e a centralização vertical do hero não mudarem.
+
+              No mobile a altura é 33svh, não um valor fixo: `svh` é a viewport
+              com a barra do Safari EXPANDIDA, que é o pior caso e o estado em
+              que a página abre. Com 260px fixos as pernas ficavam cortadas na
+              canela, porque o pé caía ~39px abaixo da dobra. Em svh a figura
+              acompanha o aparelho em vez de ser calibrada para um só. O w-180
+              é folga: com object-contain quem manda é a altura. */}
+          <div className="relative h-[33svh] max-h-[260px] w-[180px] md:h-[340px] md:max-h-none md:w-[340px]">
             <Image
               src="/biel-avatar.png"
               alt=""
