@@ -76,6 +76,7 @@
      WebGL uniform can't take a CSS var), which is why the hex parser there has
      to handle the shorthand form the CSS pipeline minifies these down to. */
   --grid: #000000;
+  --grid-opacity: 0.15;
 
   --background: #141413;
   --foreground: #f3e6c4;
@@ -138,6 +139,9 @@
   --brand: #6b4fa0;
   --ok: #6b4fa0;
   --grid: #000000;
+  /* Mais discreto que no dark: preto sobre papel creme contrasta bem mais do
+     que preto sobre #141413, então a mesma opacidade pesa muito mais aqui. */
+  --grid-opacity: 0.08;
 
   --background: #faf7f0;
   --foreground: #1c1b18;

@@ -142,19 +142,19 @@ function hexToRgb(hex: string): [number, number, number] {
 }
 
 // A WebGL uniform can't read a CSS variable, so resolve one off <html> and
-// re-read it whenever AnimatedThemeToggler flips the `light` class. Lets the
-// grid color live in globals.css with the rest of the palette instead of
-// being hardcoded here or in page.tsx.
-function useCssColor(varName: string | undefined, fallback: string) {
-  const [color, setColor] = useState(fallback);
+// re-read it whenever AnimatedThemeToggler flips the `light` class. Lets a
+// valor viver no globals.css junto do resto da paleta, em vez de hardcoded
+// aqui ou no page.tsx — vale tanto para a cor quanto para a opacidade.
+function useCssVar(varName: string | undefined, fallback: string) {
+  const [value, setValue] = useState(fallback);
 
   useEffect(() => {
     if (!varName) return;
     const read = () => {
-      const value = getComputedStyle(document.documentElement)
+      const raw = getComputedStyle(document.documentElement)
         .getPropertyValue(varName)
         .trim();
-      setColor(value || fallback);
+      setValue(raw || fallback);
     };
     read();
     const observer = new MutationObserver(read);
@@ -165,7 +165,7 @@ function useCssColor(varName: string | undefined, fallback: string) {
     return () => observer.disconnect();
   }, [varName, fallback]);
 
-  return varName ? color : fallback;
+  return varName ? value : fallback;
 }
 
 type RippleGridProps = {
@@ -173,6 +173,9 @@ type RippleGridProps = {
   /** CSS custom property holding the grid color, e.g. "--grid". Takes
    *  precedence over `gridColor` and follows the active theme. */
   colorVar?: string;
+  /** CSS custom property holding the opacity, e.g. "--grid-opacity". Takes
+   *  precedence over `opacity` e também acompanha o tema. */
+  opacityVar?: string;
   enableRainbow?: boolean;
   gridColor?: string;
   rippleIntensity?: number;
@@ -190,6 +193,7 @@ type RippleGridProps = {
 export default function RippleGrid({
   className,
   colorVar,
+  opacityVar,
   enableRainbow = false,
   gridColor = "#ffffff",
   rippleIntensity = 0.05,
@@ -203,7 +207,14 @@ export default function RippleGrid({
   mouseInteraction = true,
   mouseInteractionRadius = 1,
 }: RippleGridProps) {
-  const resolvedColor = useCssColor(colorVar, gridColor);
+  const resolvedColor = useCssVar(colorVar, gridColor);
+  // parseFloat explícito em vez de `Number(x) || opacity`: o token pode ser um
+  // "0" legítimo, que o `||` descartaria como falsy.
+  const rawOpacity = useCssVar(opacityVar, String(opacity));
+  const parsedOpacity = Number.parseFloat(rawOpacity);
+  const resolvedOpacity = Number.isFinite(parsedOpacity)
+    ? parsedOpacity
+    : opacity;
   // Desenha um frame avulso. Necessário no modo reduced-motion, onde não há
   // loop: sem isso, mudar de tema atualizava o uniform mas nada redesenhava, e
   // o grid ficava preso na cor do tema anterior para sempre.
@@ -250,7 +261,7 @@ export default function RippleGrid({
       fadeDistance: { value: fadeDistance },
       vignetteStrength: { value: vignetteStrength },
       glowIntensity: { value: glowIntensity },
-      opacity: { value: opacity },
+      opacity: { value: resolvedOpacity },
       gridRotation: { value: gridRotation },
       mouseInteraction: { value: mouseInteraction },
       mousePosition: { value: [0.5, 0.5] },
@@ -368,7 +379,7 @@ export default function RippleGrid({
     u.fadeDistance.value = fadeDistance;
     u.vignetteStrength.value = vignetteStrength;
     u.glowIntensity.value = glowIntensity;
-    u.opacity.value = opacity;
+    u.opacity.value = resolvedOpacity;
     u.gridRotation.value = gridRotation;
     u.mouseInteraction.value = mouseInteraction;
     u.mouseInteractionRadius.value = mouseInteractionRadius;
@@ -384,7 +395,7 @@ export default function RippleGrid({
     fadeDistance,
     vignetteStrength,
     glowIntensity,
-    opacity,
+    resolvedOpacity,
     gridRotation,
     mouseInteraction,
     mouseInteractionRadius,

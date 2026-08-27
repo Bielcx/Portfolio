@@ -31,6 +31,7 @@ export default function Home() {
           <RippleGrid
             className="absolute inset-0"
             colorVar="--grid"
+            opacityVar="--grid-opacity"
             rippleIntensity={0.03}
             gridSize={20}
             gridThickness={15}
