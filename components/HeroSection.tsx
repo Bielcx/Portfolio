@@ -32,11 +32,13 @@ export default function HeroSection({ profile }: { profile: Profile }) {
     <section
       ref={containerRef}
       id="home"
-      className="relative w-full max-w-5xl mx-auto px-8 pt-40 pb-16"
+      // pt menor no mobile: os 160px do pt-40 comiam ~24% da altura útil do
+      // iPhone (≈662px depois das barras do Safari) antes de qualquer conteúdo.
+      className="relative w-full max-w-5xl mx-auto px-8 pt-16 pb-16 md:pt-40"
     >
       <motion.div
         style={{ scale, opacity, y }}
-        className="flex items-center justify-between gap-12"
+        className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between md:gap-12"
       >
         <div className="flex flex-col">
           <motion.p
@@ -123,18 +125,20 @@ export default function HeroSection({ profile }: { profile: Profile }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6, delay: 0.05 }}
-          className="hidden shrink-0 md:block"
+          className="shrink-0 self-center md:self-auto"
         >
-          {/* Same 340x340 box PixelBlast occupied, so the hero's right edge
-              and vertical centering stay put. object-contain letterboxes the
-              portrait render inside it instead of cropping his head off. */}
-          <div className="relative size-[340px]">
+          {/* Desktop mantém a caixa 340x340 que o PixelBlast ocupava, para a
+              borda direita e a centralização vertical do hero não mudarem. No
+              mobile a figura vai abaixo dos links, em 180x260 — o render é 2:3,
+              então com object-contain isso dá um corpo de ~173x260, que cabe no
+              espaço livre da primeira tela e ainda lê bem a 393px de largura. */}
+          <div className="relative h-[260px] w-[180px] md:size-[340px]">
             <Image
               src="/biel-avatar.png"
               alt=""
               fill
               priority
-              sizes="340px"
+              sizes="(min-width: 768px) 340px, 180px"
               className="object-contain"
             />
           </div>
