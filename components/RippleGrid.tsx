@@ -220,11 +220,11 @@ export default function RippleGrid({
     if (!container) return;
 
     const renderer = new Renderer({
-      // Cap em 3, não em 2 (o valor do componente original): num iPhone dpr 3 o
-      // buffer a 2x era esticado 1,5x pelo navegador, e as linhas do grid, que
-      // têm 1–2px, borravam e perdiam pico de intensidade — no light, onde o
-      // contraste com o papel já é de ~15%, isso as tornava quase invisíveis.
-      dpr: Math.min(window.devicePixelRatio, 3),
+      // Cap em 2. Chegou a ir para 3 achando que o grid sumia no iPhone por
+      // falta de resolução; a causa real era o alpha (ver shader). Em dpr 3 são
+      // 2,25x mais fragmentos por frame num fundo que roda o tempo todo, o que
+      // pesa na rolagem e na bateria sem ganho visível.
+      dpr: Math.min(window.devicePixelRatio, 2),
       alpha: true,
       // Explícito para não depender do default: o shader emite cor e alpha
       // separados (straight), e é o navegador que compõe sobre a página.
@@ -290,13 +290,14 @@ export default function RippleGrid({
         x >= 0 && x <= 1 && y >= 0 && y <= 1 ? 1.0 : 0.0;
     };
 
-    // ResizeObserver no container, e não `window.resize`: o container é filho de
-    // um `fixed inset-0`, então ele acompanha a viewport — e no Safari do iOS a
-    // barra de endereço recolhendo muda essa altura sem disparar `resize`. Sem
-    // observar, o canvas ficava com o backing store do tamanho errado e era
-    // esticado por CSS, borrando as linhas de 1–2px do grid.
-    const observer = new ResizeObserver(resize);
-    observer.observe(container);
+    // `window.resize` de propósito, e NÃO um ResizeObserver no container. O
+    // container é filho de um `fixed inset-0`, então sua altura acompanha a
+    // viewport — e no Safari do iOS a barra de endereço recolhe e reaparece a
+    // cada rolagem. Um ResizeObserver dispara em todas essas mudanças e
+    // reconstrói o buffer no meio do scroll, com o aspect do shader mudando
+    // junto: o grid pula e treme. `window.resize` ignora a barra de endereço e
+    // ainda pega rotação de tela, que é o que importa aqui.
+    window.addEventListener("resize", resize);
     if (mouseInteraction) {
       window.addEventListener("mousemove", handleMouseMove);
     }
@@ -339,7 +340,7 @@ export default function RippleGrid({
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      observer.disconnect();
+      window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", handleMouseMove);
       drawRef.current = null;
       renderer.gl.getExtension("WEBGL_lose_context")?.loseContext();
