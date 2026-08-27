@@ -40,12 +40,12 @@ export default function HeroSection({ profile }: { profile: Profile }) {
         style={{ scale, opacity, y }}
         className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between md:gap-12"
       >
-        <div className="flex flex-col">
+        <div className="flex flex-col text-center md:text-left">
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.1 }}
-            className="flex items-center gap-2.5 font-mono text-xs text-brand tracking-[0.2em] uppercase mb-6"
+            className="flex items-center justify-center gap-2.5 font-mono text-xs text-brand tracking-[0.2em] uppercase mb-6 md:justify-start"
           >
             <span className="size-[7px] shrink-0 bg-brand pulse-dot" />
             Available for work
@@ -75,7 +75,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.4 }}
-            className="font-mono text-sm text-ink-muted max-w-[420px] leading-7 mb-8"
+            className="font-mono text-sm text-ink-muted max-w-[420px] mx-auto leading-7 mb-8 md:mx-0"
           >
             Front, back e deploy em produção — de produtos para clientes
             reais a contribuições em projetos open source.
@@ -85,7 +85,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.65 }}
-            className="flex items-center gap-6"
+            className="flex items-center justify-center gap-6 md:justify-start"
           >
             <a
               href={profile.github}
