@@ -15,10 +15,39 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = "https://gabrielcavalcanti.vercel.app";
+const title = "Gabriel Cavalcanti — Full Stack Developer";
+const description =
+  "Portfolio de Gabriel Cavalcanti, desenvolvedor Full Stack especializado em React, Next.js e Web3. Baseado no Brasil.";
+
 export const metadata: Metadata = {
-  title: "Gabriel Cavalcanti — Full Stack Developer",
-  description:
-    "Portfolio de Gabriel Cavalcanti, desenvolvedor Full Stack especializado em React, Next.js e Web3. Baseado no Brasil.",
+  // metadataBase é o que faz o Next resolver /OGimage.png para uma URL
+  // absoluta — sem ele o crawler recebe um caminho relativo e ignora a imagem.
+  metadataBase: new URL(siteUrl),
+  title,
+  description,
+  openGraph: {
+    title,
+    description,
+    url: siteUrl,
+    siteName: "Gabriel Cavalcanti",
+    locale: "pt_BR",
+    type: "website",
+    images: [
+      {
+        url: "/OGimage.png",
+        width: 1200,
+        height: 630,
+        alt: "Gabriel Cavalcanti — Full Stack Developer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/OGimage.png"],
+  },
 };
 
 export default function RootLayout({

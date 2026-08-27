@@ -216,7 +216,11 @@ export default function RippleGrid({
     if (!container) return;
 
     const renderer = new Renderer({
-      dpr: Math.min(window.devicePixelRatio, 2),
+      // Cap em 3, não em 2 (o valor do componente original): num iPhone dpr 3 o
+      // buffer a 2x era esticado 1,5x pelo navegador, e as linhas do grid, que
+      // têm 1–2px, borravam e perdiam pico de intensidade — no light, onde o
+      // contraste com o papel já é de ~15%, isso as tornava quase invisíveis.
+      dpr: Math.min(window.devicePixelRatio, 3),
       alpha: true,
     });
     const gl = renderer.gl;
