@@ -112,15 +112,15 @@ void main() {
     }
 
     float finalFade = ddd * vignette;
-    // Alpha has to track the grid intensity per channel, not length(color):
-    // the color vector is neutral, so its length is ~1.73x each channel, which
-    // made the composited line always darker than the gridColor actually asked
-    // for (pure white landed around mid grey). On the dark surface that still
-    // reads as a light line so it went unnoticed, but on the light theme it
-    // turned the grid into grey lines that washed the warm paper out.
+    // Straight (non-premultiplied) output: RGB é a cor pedida, alpha é só a
+    // intensidade da linha. O canvas é criado com premultipliedAlpha: false,
+    // então a composição do navegador ja faz rgb * alpha + fundo * (1 - alpha).
+    // Emitir t * alpha aqui, como o componente original fazia, multiplicava
+    // pelo alpha duas vezes e o branco puro saía como linha escura — visível no
+    // Chrome/Edge, mas não no Safari do iOS, que interpretava como
+    // pré-multiplicado. Era a origem do grid preto no PC e branco no celular.
     float intensity = clamp(max(color.r, max(color.g, color.b)), 0.0, 1.0);
-    float alpha = intensity * finalFade * opacity;
-    gl_FragColor = vec4(t * intensity * finalFade * opacity, alpha);
+    gl_FragColor = vec4(t, intensity * finalFade * opacity);
 }`;
 
 // Accepts shorthand (#000) as well as full (#000000) hex. The stock React Bits
@@ -226,10 +226,15 @@ export default function RippleGrid({
       // contraste com o papel já é de ~15%, isso as tornava quase invisíveis.
       dpr: Math.min(window.devicePixelRatio, 3),
       alpha: true,
+      // Explícito para não depender do default: o shader emite cor e alpha
+      // separados (straight), e é o navegador que compõe sobre a página.
+      premultipliedAlpha: false,
     });
     const gl = renderer.gl;
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    // Sem blending: é um único triângulo cobrindo a tela, nada se sobrepõe.
+    // Com BLEND ligado o alpha era elevado ao quadrado no framebuffer, o que
+    // somava mais erro em cima do double-multiply da composição.
+    gl.disable(gl.BLEND);
     gl.canvas.style.width = "100%";
     gl.canvas.style.height = "100%";
     container.appendChild(gl.canvas);
