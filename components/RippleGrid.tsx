@@ -204,6 +204,10 @@ export default function RippleGrid({
   mouseInteractionRadius = 1,
 }: RippleGridProps) {
   const resolvedColor = useCssColor(colorVar, gridColor);
+  // Desenha um frame avulso. Necessário no modo reduced-motion, onde não há
+  // loop: sem isso, mudar de tema atualizava o uniform mas nada redesenhava, e
+  // o grid ficava preso na cor do tema anterior para sempre.
+  const drawRef = useRef<(() => void) | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const mousePositionRef = useRef({ x: 0.5, y: 0.5 });
   const targetMouseRef = useRef({ x: 0.5, y: 0.5 });
@@ -258,9 +262,11 @@ export default function RippleGrid({
       uniforms,
     });
     const mesh = new Mesh(gl, { geometry, program });
+    drawRef.current = () => renderer.render({ scene: mesh });
 
     const resize = () => {
       const { clientWidth: w, clientHeight: h } = container;
+      if (w === 0 || h === 0) return;
       renderer.setSize(w, h);
       uniforms.iResolution.value = [w, h];
     };
@@ -279,7 +285,13 @@ export default function RippleGrid({
         x >= 0 && x <= 1 && y >= 0 && y <= 1 ? 1.0 : 0.0;
     };
 
-    window.addEventListener("resize", resize);
+    // ResizeObserver no container, e não `window.resize`: o container é filho de
+    // um `fixed inset-0`, então ele acompanha a viewport — e no Safari do iOS a
+    // barra de endereço recolhendo muda essa altura sem disparar `resize`. Sem
+    // observar, o canvas ficava com o backing store do tamanho errado e era
+    // esticado por CSS, borrando as linhas de 1–2px do grid.
+    const observer = new ResizeObserver(resize);
+    observer.observe(container);
     if (mouseInteraction) {
       window.addEventListener("mousemove", handleMouseMove);
     }
@@ -322,8 +334,9 @@ export default function RippleGrid({
 
     return () => {
       cancelAnimationFrame(animationFrameId);
-      window.removeEventListener("resize", resize);
+      observer.disconnect();
       window.removeEventListener("mousemove", handleMouseMove);
+      drawRef.current = null;
       renderer.gl.getExtension("WEBGL_lose_context")?.loseContext();
       container.removeChild(gl.canvas);
     };
@@ -345,6 +358,9 @@ export default function RippleGrid({
     u.gridRotation.value = gridRotation;
     u.mouseInteraction.value = mouseInteraction;
     u.mouseInteractionRadius.value = mouseInteractionRadius;
+    // Redesenha na hora: com o loop rodando isso é um frame a mais, irrelevante;
+    // sem o loop (reduced motion) é o que faz a mudança de tema aparecer.
+    drawRef.current?.();
   }, [
     enableRainbow,
     resolvedColor,

@@ -22,7 +22,7 @@ export default function Home() {
             of stretching over the full page height as you scroll. */}
         <div
           aria-hidden
-          className="pointer-events-none fixed inset-0 overflow-hidden"
+          className="theme-bg pointer-events-none fixed inset-0 overflow-hidden"
         >
           <RippleGrid
             className="absolute inset-0"
