@@ -145,17 +145,19 @@ function hexToRgb(hex: string): [number, number, number] {
 // re-read it whenever AnimatedThemeToggler flips the `light` class. Lets a
 // valor viver no globals.css junto do resto da paleta, em vez de hardcoded
 // aqui ou no page.tsx — vale tanto para a cor quanto para a opacidade.
+function readCssVar(varName: string, fallback: string) {
+  const raw = getComputedStyle(document.documentElement)
+    .getPropertyValue(varName)
+    .trim();
+  return raw || fallback;
+}
+
 function useCssVar(varName: string | undefined, fallback: string) {
   const [value, setValue] = useState(fallback);
 
   useEffect(() => {
     if (!varName) return;
-    const read = () => {
-      const raw = getComputedStyle(document.documentElement)
-        .getPropertyValue(varName)
-        .trim();
-      setValue(raw || fallback);
-    };
+    const read = () => setValue(readCssVar(varName, fallback));
     read();
     const observer = new MutationObserver(read);
     observer.observe(document.documentElement, {
@@ -295,6 +297,31 @@ export default function RippleGrid({
       uniforms.iResolution.value = [w, h];
     };
 
+    // Aplica cor e opacidade do tema DE FORMA SÍNCRONA quando a classe do
+    // <html> muda, e redesenha na hora. O caminho via React (estado -> efeito
+    // -> próximo frame) é assíncrono demais: a troca de tema roda dentro de um
+    // startViewTransition, e o navegador fotografa o "depois" antes do canvas
+    // repintar — quando a foto sai e a página ao vivo volta, o valor pulava e
+    // dava a piscada. O efeito de sincronismo mais abaixo continua existindo
+    // para mudanças de prop; escreve os mesmos valores, então não conflita.
+    const applyThemeVars = () => {
+      if (colorVar) {
+        uniforms.gridColor.value = hexToRgb(readCssVar(colorVar, gridColor));
+      }
+      if (opacityVar) {
+        const parsed = Number.parseFloat(
+          readCssVar(opacityVar, String(opacity))
+        );
+        if (Number.isFinite(parsed)) uniforms.opacity.value = parsed;
+      }
+      renderer.render({ scene: mesh });
+    };
+    const themeObserver = new MutationObserver(applyThemeVars);
+    themeObserver.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
     // The grid sits behind the whole page with pointer-events disabled, so the
     // stock component's mouseenter/mouseleave listeners on the container never
     // fire — track the pointer on window instead and derive enter/leave from
@@ -359,6 +386,7 @@ export default function RippleGrid({
 
     return () => {
       cancelAnimationFrame(animationFrameId);
+      themeObserver.disconnect();
       window.removeEventListener("resize", resize);
       window.removeEventListener("mousemove", handleMouseMove);
       drawRef.current = null;
