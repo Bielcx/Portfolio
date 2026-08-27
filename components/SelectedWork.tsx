@@ -666,11 +666,15 @@ export default function SelectedWork() {
               onClick={(e) => e.stopPropagation()}
               className="max-h-full max-w-full object-contain"
             />
+            {/* Sem caixa nem borda — só o ícone, como o X do painel. O creme é
+                hardcoded (exceção de bloco sempre escuro, ver CLAUDE.md): o
+                fundo do lightbox é preto nos dois temas, e `text-ink` seria
+                quase preto no claro, sumindo assim que a caixa saísse. */}
             <button
               ref={lightboxCloseRef}
               onClick={closeLightbox}
               aria-label="Fechar screenshot ampliado"
-              className="fixed top-3 right-3 md:top-6 md:right-6 flex size-11 items-center justify-center bg-surface/70 border border-line-strong text-ink hover:bg-surface/95 hover:border-ink/50 transition-colors"
+              className="fixed top-3 right-3 md:top-6 md:right-6 flex size-11 cursor-pointer items-center justify-center text-[#f3e6c4]/70 transition-colors hover:text-[#f3e6c4]"
             >
               <X className="size-5" weight="bold" />
             </button>
