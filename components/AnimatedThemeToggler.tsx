@@ -45,19 +45,8 @@ export function AnimatedThemeToggler({
       Math.max(y, window.innerHeight - y),
     );
 
-    // Marca o <html> enquanto a transição roda. O fundo fica congelado em duas
-    // fotos estáticas por ~400ms, mas o canvas do RippleGrid continua ao vivo e
-    // troca de cor na hora — daria a cor nova do grid sobre o fundo antigo
-    // (preto sobre creme no sentido claro→escuro, bem visível). A regra em
-    // globals.css esconde o grid enquanto esta classe existe.
-    document.documentElement.classList.add("theme-transitioning");
-
     const transition = document.startViewTransition(() => {
       flushSync(applyTheme);
-    });
-
-    transition.finished.finally(() => {
-      document.documentElement.classList.remove("theme-transitioning");
     });
 
     transition.ready.then(() => {

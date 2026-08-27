@@ -271,14 +271,6 @@ body.modal-open .theme-toggle {
   display: none;
 }
 
-/* Durante a troca de tema o fundo vira duas fotos estáticas por ~400ms, mas o
-   canvas do RippleGrid continua desenhando ao vivo e adota a cor nova na hora —
-   o que pintava a cor nova do grid sobre o fundo antigo. Esconder a camada
-   inteira enquanto a transição roda mantém fundo e grid no mesmo tempo. */
-.theme-transitioning .theme-bg {
-  visibility: hidden;
-}
-
 /* Border beam (magicui-style, CSS-only): an oversized conic-gradient spins
    behind a mask that only reveals the card's 1px border ring. `rotate` is
    GPU-composited, unlike offset-distance (main thread, stuttered in dev). */
