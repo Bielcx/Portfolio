@@ -155,6 +155,7 @@ const projects: Project[] = [
     href: "https://sizr-three.vercel.app",
     repo: "https://github.com/Bielcx/sizr",
     screenshotSrc: "/screenshots/sizr.png",
+    screenshotMobileSrc: "/screenshots/sizr-mobile.png",
     terminalHeader: true,
   },
   {
