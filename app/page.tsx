@@ -1,7 +1,6 @@
 import HeroSection from "@/components/HeroSection";
 import SelectedWork from "@/components/SelectedWork";
 import { AnimatedThemeToggler } from "@/components/AnimatedThemeToggler";
-import RippleGrid from "@/components/RippleGrid";
 
 const profile = {
   name: "Gabriel Cavalcanti",
@@ -9,38 +8,33 @@ const profile = {
   email: "biel.cavalcanti1@hotmail.com",
   github: "https://github.com/Bielcx",
   x: "https://x.com/bielthegoat",
+  // O portfólio comercial — o outro lado do portal, e o destino do `← web2`.
+  web2: "https://gabriel.doabridge.com",
 };
 
 
 export default function Home() {
   return (
       <main className="relative w-full min-h-screen bg-surface text-ink">
-        {/* Background stack — fixed para o grid ficar do tamanho da viewport em
-            vez de esticar pela altura toda da página. A altura é `100lvh`, e
-            não `inset-0`, de propósito: no Safari do iOS a barra de endereço
-            recolhe ao rolar e a viewport cresce de uma vez, o que redimensiona
-            o canvas e faz o grid reescalar num salto bem visível. `lvh` é a
-            altura com a barra recolhida, constante durante a rolagem. */}
+        {/* O FUNDO DO SITE — as quatro camadas do handoff da hero, na ordem:
+            holofote, banho de acento, grão e vinheta. Todas leem tokens, então
+            a troca de tema já as leva junto.
+
+            É `fixed` com `100lvh`, e não `inset-0`, pelo mesmo motivo de antes:
+            no Safari do iOS a barra de endereço recolhe ao rolar e a viewport
+            cresce de uma vez; `lvh` é a altura com a barra recolhida, constante
+            durante a rolagem, então o holofote não dá um salto no meio.
+
+            Aqui morava o RippleGrid (WebGL). Ele saiu com o redesign — o fundo
+            agora é o do handoff — mas o componente segue no repositório. */}
         <div
           aria-hidden
           className="pointer-events-none fixed inset-x-0 top-0 h-[100lvh] overflow-hidden"
         >
-          <RippleGrid
-            className="absolute inset-0"
-            colorVar="--grid"
-            opacityVar="--grid-opacity"
-            rippleIntensity={0.03}
-            gridSize={20}
-            gridThickness={15}
-            fadeDistance={3.0}
-            vignetteStrength={12}
-            glowIntensity={0.1}
-            opacity={0.15}
-            gridRotation={0}
-            mouseInteraction
-            mouseInteractionRadius={0.8}
-          />
-          <div className="grain absolute inset-0 opacity-25 mix-blend-overlay" />
+          <div className="bg-spot absolute inset-0" />
+          <div className="bg-wash absolute inset-0" />
+          <div className="grain absolute inset-0" />
+          <div className="bg-vignette absolute inset-0" />
         </div>
 
         <AnimatedThemeToggler className="theme-toggle fixed top-6 right-6 z-50" />
@@ -52,7 +46,7 @@ export default function Home() {
 
           <section
             id="contact"
-            className="mx-auto max-w-5xl px-8 py-24 border-t border-line"
+            className="px-6 min-[900px]:px-16 py-24 border-t border-line"
           >
             <p className="font-mono text-xs text-ink-faint tracking-[0.2em] uppercase mb-8">
               Contact
@@ -60,7 +54,7 @@ export default function Home() {
 
             <div className="terminal-block border border-line-strong bg-surface-2 p-8 font-mono text-sm leading-loose text-ink-muted">
               <p>
-                <span className="text-ok">$</span> gabriel contact --new-project
+                <span className="text-ok">$</span> bielcx contact --new-project
               </p>
               <p className="text-ink-faint">
                 Tem um projeto em mente? Vamos conversar.
@@ -117,7 +111,7 @@ export default function Home() {
             </div>
           </section>
 
-          <footer className="mx-auto max-w-5xl px-8 py-8 border-t border-line flex items-center justify-between">
+          <footer className="px-6 min-[900px]:px-16 py-8 border-t border-line flex items-center justify-between">
             <span className="font-mono text-xs text-ink-faint">
               © {new Date().getFullYear()} Gabriel Cavalcanti
             </span>

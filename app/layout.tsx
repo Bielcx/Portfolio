@@ -1,10 +1,18 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import { Archivo_Black, Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { ArrivalPortal } from "@/components/ArrivalPortal";
 import { cn } from "@/lib/utils";
 
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
+
+// Archivo Black só existe no peso 400 — o "black" está no desenho da fonte, não
+// no eixo de peso. Só o nick da hero a usa.
+const archivoBlack = Archivo_Black({
+  subsets: ["latin"],
+  weight: "400",
+  variable: "--font-archivo",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -64,6 +72,7 @@ export default function RootLayout({
         geistSans.variable,
         geistMono.variable,
         jetbrainsMono.variable,
+        archivoBlack.variable,
         "font-mono"
       )}
     >

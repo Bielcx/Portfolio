@@ -22,12 +22,19 @@
   --color-line-strong: var(--line-strong);
   --color-brand: var(--brand);
   --color-ok: var(--ok);
+  /* O terracota cheio do handoff, IGUAL nos dois temas: e o preenchimento do
+     CTA primario e dos cantos do frame, nunca texto sobre o fundo. Quem e
+     texto e o --brand, que escurece no claro para passar no AA. */
+  --color-brand-solid: var(--brand-solid);
+  --color-on-brand: var(--on-brand);
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-mono);
   --font-heading: var(--font-mono);
+  /* Archivo Black — so o nick da hero. O resto do site e mono. */
+  --font-display: var(--font-archivo);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -54,22 +61,34 @@
 }
 
 :root {
-  /* Dark (default) — unchanged values, previously hardcoded per element.
-     --ink-faint / --line / --line-strong are the old #948F85 at 70%/15%/25%
-     flattened against --surface, so they render identically but survive
-     being stacked on a non-surface background. */
-  --surface: #141413;
-  --surface-2: #111110;
-  --ink: #f3e6c4;
-  --ink-muted: #948f85;
-  --ink-faint: #6e6a62;
-  --line: #272624;
-  --line-strong: #343330;
-  /* Accent do tema. Dark = verde, light = lavanda (ver bloco .light). --brand e
-     --ok carregam o mesmo hex dentro de cada tema hoje; os dois nomes seguem
-     existindo para poderem divergir depois, não por engano. */
-  --brand: #4ade80;
-  --ok: #4ade80;
+  /* Dark (default) — a paleta "Organic" do handoff da hero: fundo preto,
+     tinta creme, acento terracota, segundo acento sage. --ink-muted é o
+     corpo de texto e --ink-faint o rótulo, escolhido para passar 4,5:1
+     sobre o fundo de cada tema. */
+  --surface: #000000;
+  --surface-2: #14120f;
+  --ink: #f5ead8;
+  --ink-muted: #dcd3c4;
+  --ink-faint: #a19786;
+  --line: rgba(245, 234, 216, 0.08);
+  --line-strong: #2e2b25;
+  /* Accent do tema: --brand é o terracota (texto e realce), --ok é o sage
+     (o `$` do terminal, o `online`, o PR merged). Agora carregam hex
+     diferentes — antes eram o mesmo verde. */
+  --brand: #c67139;
+  --ok: #8fa073;
+  --brand-solid: #c67139;
+  --on-brand: #0c0906;
+  /* Holofote, banho de acento e vinheta da hero — as tres camadas de fundo do
+     handoff. Ficam aqui porque mudam de tema; a hero so as empilha. */
+  --spot: rgba(245, 234, 216, 0.09);
+  --wash: rgba(198, 113, 57, 0.1);
+  --vignette: rgba(0, 0, 0, 0.9);
+  --vignette-stop: 18%;
+  /* A borda tracejada do frame do avatar. */
+  --frame-border: rgba(143, 160, 115, 0.35);
+  --grain-opacity: 0.12;
+  --grain-blend: normal;
   /* RippleGrid background lines — split per theme so each can be tuned against
      its own background. Black here reads as a subtle darkening of the surface
      rather than a drawn line. Consumed by RippleGrid via getComputedStyle (a
@@ -78,8 +97,8 @@
   --grid: #000000;
   --grid-opacity: 0.15;
 
-  --background: #141413;
-  --foreground: #f3e6c4;
+  --background: #000000;
+  --foreground: #f5ead8;
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -120,31 +139,38 @@
   --ring: oklch(0.556 0 0);
 }
 
-/* Light — a warm-paper mirror of the dark theme rather than a second,
-   colder identity. Neutral greys (neutral-600/400/200) read blue next to
-   the dark theme's cream/tan, which is why the two used to look like
-   different sites. --brand and --ok are the dark lavender/green darkened
-   until they pass AA on paper (#4ade80 was 1.67:1 here — invisible). */
+/* Light — o mesmo tema virado do avesso: o creme que é tinta no escuro vira
+   o papel aqui, e a tinta vira o quase-preto. Os dois acentos escurecem o
+   bastante para passar no AA sobre o papel. */
 .light {
-  --surface: #faf7f0;
-  --surface-2: #f4efe4;
-  --ink: #1c1b18;
-  --ink-muted: #6b6459;
-  --ink-faint: #746c61;
-  --line: #e2dbcc;
-  --line-strong: #d6cdba;
-  /* Accent do light. Efeito colateral aceito: com --brand e --ok no mesmo hex,
-     em statusStyles (SelectedWork) os PRs merged e open perdem a distinção por
-     cor — o texto do status ao lado continua diferenciando. */
-  --brand: #6b4fa0;
-  --ok: #6b4fa0;
+  --surface: #f5ead8;
+  --surface-2: #ece0c9;
+  --ink: #201e1d;
+  --ink-muted: #474238;
+  --ink-faint: #645c50;
+  --line: rgba(32, 30, 29, 0.14);
+  --line-strong: rgba(32, 30, 29, 0.22);
+  /* O terracota do handoff da 3,2:1 sobre o creme — reprova no AA como texto.
+     Entao o --brand do claro e o tom "pressed" da mesma familia (#8c491a,
+     5,3:1), e o --brand-solid, que so e preenchimento, segue o original. */
+  --brand: #8c491a;
+  --ok: #56633f;
+  --brand-solid: #c67139;
+  --on-brand: #f5ead8;
+  --spot: rgba(255, 252, 246, 0.95);
+  --wash: rgba(198, 113, 57, 0.14);
+  --vignette: rgba(71, 66, 56, 0.26);
+  --vignette-stop: 20%;
+  --frame-border: rgba(86, 99, 63, 0.5);
+  --grain-opacity: 0.07;
+  --grain-blend: multiply;
   --grid: #000000;
   /* Mais discreto que no dark: preto sobre papel creme contrasta bem mais do
-     que preto sobre #141413, então a mesma opacidade pesa muito mais aqui. */
+     que preto sobre o fundo escuro, então a mesma opacidade pesa mais aqui. */
   --grid-opacity: 0.08;
 
-  --background: #faf7f0;
-  --foreground: #1c1b18;
+  --background: #f5ead8;
+  --foreground: #201e1d;
 }
 
 /* Bloco de contato: é um terminal, então fica escuro nos dois temas. Em vez de
@@ -153,22 +179,22 @@
    border-line-strong…) continuam valendo sem precisar de nenhuma alteração.
    Só funciona porque o @theme inline emite `var(--ok)` e não o valor literal. */
 .terminal-block {
-  --surface-2: #111110;
-  --ink: #f3e6c4;
-  --ink-muted: #948f85;
-  --ink-faint: #6e6a62;
-  --line: #272624;
-  --line-strong: #343330;
-  --brand: #4ade80;
-  --ok: #4ade80;
+  --surface-2: #14120f;
+  --ink: #f5ead8;
+  --ink-muted: #dcd3c4;
+  --ink-faint: #a19786;
+  --line: rgba(245, 234, 216, 0.08);
+  --line-strong: #2e2b25;
+  --brand: #c67139;
+  --ok: #8fa073;
 }
 
-/* No light o accent é lavanda, mas o bloco segue escuro — então usa a lavanda
-   clara (#B497CF, a antiga do dark), e não a #6B4FA0 do light: aquela é feita
-   para papel e sobre #111110 dá 2,9:1, reprovando no AA. Esta dá 7,2:1. */
+/* O bloco segue escuro no claro, então volta ao terracota e ao sage do dark:
+   o #8c491a do tema claro é feito para papel e sobre #14120f dá 2,4:1,
+   reprovando no AA. */
 .light .terminal-block {
-  --brand: #b497cf;
-  --ok: #b497cf;
+  --brand: #c67139;
+  --ok: #8fa073;
 }
 
 /* Animated theme toggler — the circle reveal animates ::view-transition-new,
@@ -213,8 +239,56 @@
   /* Film grain (paperclip.ing-style): static SVG fractal noise tile,
      meant to be layered with mix-blend-mode: overlay at low opacity. */
   .grain {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     background-repeat: repeat;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: var(--grain-blend);
+  }
+
+  /* As outras tres camadas do fundo, na ordem em que o handoff as empilha:
+     holofote, banho de acento e vinheta. São classes, e não style inline,
+     porque `mix-blend-mode: var(...)` não passa pelo tipo CSSProperties do
+     React — e porque as quatro só fazem sentido juntas. */
+  .bg-spot {
+    background: radial-gradient(
+      760px 620px at 26% 34%,
+      var(--spot),
+      transparent 70%
+    );
+  }
+  .bg-wash {
+    background: radial-gradient(
+      520px 420px at 78% 62%,
+      var(--wash),
+      transparent 72%
+    );
+  }
+  .bg-vignette {
+    background: radial-gradient(
+      120% 110% at 30% 35%,
+      transparent var(--vignette-stop),
+      var(--vignette) 78%
+    );
+  }
+
+  /* A linha de varredura do frame do avatar. Sob reduced-motion ela para no
+     lugar em vez de sumir: a faixa parada ainda diz que aquilo é uma captura. */
+  .scan-line {
+    animation: scan 4.6s linear infinite;
+  }
+  @keyframes scan {
+    from {
+      transform: translateY(-10%);
+    }
+    to {
+      transform: translateY(420%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scan-line {
+      animation: none;
+      opacity: 0.5;
+    }
   }
 
   /* Slim themed scrollbar for the project modal — sharp (no radius) to match
@@ -303,6 +377,6 @@ html[data-portal]::before {
   position: fixed;
   inset: 0;
   z-index: 60;
-  background: #141413;
+  background: #000000;
   pointer-events: none;
 }

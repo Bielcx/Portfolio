@@ -395,7 +395,7 @@ export default function SelectedWork() {
 
   return (
     <>
-      <section id="work" className="mx-auto max-w-5xl px-8 py-24">
+      <section id="work" className="px-6 min-[900px]:px-16 py-24">
         <div className="mb-10 flex items-baseline justify-between border-b border-line pb-4">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand">
             Selected Work
@@ -504,7 +504,7 @@ export default function SelectedWork() {
                   {!reducedMotion && (
                   <Galaxy
                     className="absolute inset-0"
-                    color="#b497cf"
+                    color="#c67139"
                     tintStrength={1}
                     solidTint={isLight}
                     density={1}
@@ -680,7 +680,7 @@ export default function SelectedWork() {
               ref={lightboxCloseRef}
               onClick={closeLightbox}
               aria-label="Fechar screenshot ampliado"
-              className="fixed top-3 right-3 md:top-6 md:right-6 flex size-11 cursor-pointer items-center justify-center text-[#f3e6c4]/70 transition-colors hover:text-[#f3e6c4]"
+              className="fixed top-3 right-3 md:top-6 md:right-6 flex size-11 cursor-pointer items-center justify-center text-[#f5ead8]/70 transition-colors hover:text-[#f5ead8]"
             >
               <X className="size-5" weight="bold" />
             </button>

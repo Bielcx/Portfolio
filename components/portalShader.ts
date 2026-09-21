@@ -19,12 +19,20 @@
  * comentário — é a armadilha que o AGENTS.md deste repositório já registra.
  */
 
-/** Verde ácido do portal, na borda. */
-const VERDE = "vec3(0.592, 0.839, 0.310)"
-/** Menta, no corpo do anel. */
-const MENTA = "vec3(0.455, 0.839, 0.706)"
 /**
- * O miolo, que é o `--surface` do tema escuro (`#141413`).
+ * As DUAS cores são as do losango do Ethereum do site de saída, medidas do
+ * `ethShaders.ts` de lá: o portal abre a partir do botão que tem o losango
+ * dentro, então ele chega aqui com a cor de quem o abriu. Antes eram o verde
+ * ácido e a menta daquele tema, que não são as cores deste site nem daquele
+ * botão. Elas NÃO seguem o accent daqui pelo mesmo motivo do miolo abaixo: a
+ * régua é a outra ponta da viagem.
+ */
+/** O realce do losango, na borda. */
+const AZUL_CLARO = "vec3(0.750, 0.880, 1.000)"
+/** A base do losango — o `--color-accent-cool` de lá, `#4f9bf0`. */
+const AZUL = "vec3(0.310, 0.608, 0.941)"
+/**
+ * O miolo, que é o `--surface` do tema escuro (`#000`).
  *
  * É a cor com que a outra ponta termina, e por isso ela é fixa aqui mesmo no
  * tema claro: o portal é escuro dos dois lados da viagem, e quem chega no
@@ -32,7 +40,7 @@ const MENTA = "vec3(0.455, 0.839, 0.706)"
  * no tema claro quebraria a emenda com o site de saída, que não tem como saber
  * qual tema este visitante tem — é outra origem, outro `localStorage`.
  */
-const MIOLO = "vec3(0.078, 0.078, 0.075)"
+const MIOLO = "vec3(0.000, 0.000, 0.000)"
 
 export const PORTAL_FRAG = `#version 300 es
 precision highp float;
@@ -82,7 +90,7 @@ void main(){
   float fio = fbm(vec2(ang * 5.0 - uT * 1.6, r * 6.0));
   anel *= 0.55 + 0.75 * fio;
 
-  vec3 cor = mix(${MENTA}, ${VERDE}, clamp(fio * 1.2, 0.0, 1.0));
+  vec3 cor = mix(${AZUL}, ${AZUL_CLARO}, clamp(fio * 1.2, 0.0, 1.0));
 
   float dentro = 1.0 - smoothstep(borda - esp * 1.4, borda, r);
   vec3 miolo = mix(${MIOLO}, cor * 0.55, dentro * (1.0 - dentro) * 1.6);
