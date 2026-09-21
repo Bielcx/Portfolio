@@ -286,7 +286,7 @@ export default function RippleGrid({
     let lastH = 0;
     const resize = () => {
       const { clientWidth: w, clientHeight: h } = container;
-      // Ignora medida zerada (acontece enquanto o splash do TerminalIntro está
+      // Ignora medida zerada (acontece enquanto a capa do ArrivalPortal está
       // na frente) e chamadas que não mudam nada — reconstruir o buffer à toa
       // custa caro e faz o grid piscar.
       if (w === 0 || h === 0) return;

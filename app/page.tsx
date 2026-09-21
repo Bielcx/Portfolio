@@ -1,22 +1,19 @@
 import HeroSection from "@/components/HeroSection";
 import SelectedWork from "@/components/SelectedWork";
-import { PortfolioWrapper } from "@/components/PortfolioWrapper";
 import { AnimatedThemeToggler } from "@/components/AnimatedThemeToggler";
 import RippleGrid from "@/components/RippleGrid";
 
 const profile = {
   name: "Gabriel Cavalcanti",
-  role: "Full Stack Developer",
   location: "Brasil",
   email: "biel.cavalcanti1@hotmail.com",
   github: "https://github.com/Bielcx",
-  linkedin: "https://www.linkedin.com/in/gabrielcavalcanti-dev",
+  x: "https://x.com/bielthegoat",
 };
 
 
 export default function Home() {
   return (
-    <PortfolioWrapper>
       <main className="relative w-full min-h-screen bg-surface text-ink">
         {/* Background stack — fixed para o grid ficar do tamanho da viewport em
             vez de esticar pela altura toda da página. A altura é `100lvh`, e
@@ -110,12 +107,12 @@ export default function Home() {
                 GitHub ↗
               </a>
               <a
-                href={profile.linkedin}
+                href={profile.x}
                 target="_blank"
                 rel="noreferrer"
                 className="flex min-h-11 items-center text-ink-muted hover:text-ink transition-colors"
               >
-                LinkedIn ↗
+                X ↗
               </a>
             </div>
           </section>
@@ -130,6 +127,5 @@ export default function Home() {
           </footer>
         </div>
       </main>
-    </PortfolioWrapper>
   );
 }

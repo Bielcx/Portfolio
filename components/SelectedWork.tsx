@@ -96,14 +96,14 @@ const skatehiveContributions: Contribution[] = [
 // so filtering/counting it undercounts the real total (proved wrong twice:
 // first hardcoded "14", then a derived count that was still only 14/20
 // because the array itself was stale). These numbers were checked directly
-// against GitHub's search API on 2026-07-21:
-//   is:pr author:Bielcx repo:SkateHive/skatehive3.0             → 25 total
-//   is:pr is:merged author:Bielcx repo:SkateHive/skatehive3.0   → 20 merged
-//   is:pr is:open author:Bielcx repo:SkateHive/skatehive3.0     → 3 open
+// against GitHub's search API on 2026-09-21:
+//   is:pr author:Bielcx repo:SkateHive/skatehive3.0             → 30 total
+//   is:pr is:merged author:Bielcx repo:SkateHive/skatehive3.0   → 27 merged
+//   is:pr is:open author:Bielcx repo:SkateHive/skatehive3.0     → 1 open
 //   is:pr is:unmerged is:closed author:Bielcx repo:...          → 2 closed
 // Re-run those queries to refresh when this drifts again — don't try to
 // derive it from the curated array, that's what caused the drift.
-const skatehiveStats = { merged: 20, open: 3, closed: 2, total: 25 };
+const skatehiveStats = { merged: 27, open: 1, closed: 2, total: 30 };
 
 const projects: Project[] = [
   {
@@ -125,70 +125,59 @@ const projects: Project[] = [
     contributions: skatehiveContributions,
   },
   {
-    slug: "fiveout",
-    title: "Fiveoout",
-    year: "2025",
+    slug: "doabridge",
+    title: "Do A Bridge",
+    year: "2026",
     description:
-      "Catálogo e painel de gestão desenvolvidos para a Fiveoout, cliente real do setor de streetwear — cadastro de peças, controle de estoque em tempo real e catálogo público com fechamento de pedido via WhatsApp. Autenticação SSR com Supabase.",
-    stack: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "Tailwind"],
+      "Bridge entre Ethereum, Base e Solana, nas duas direções de cada par. O catálogo de ativos vem do LI.FI em tempo de execução — ~5.500 tokens na Ethereum, ~1.000 na Base e ~4.400 na Solana —, então não existe lista fixa de moedas no código. O diferencial é Solana: os concorrentes rodam o mesmo motor do LI.FI configurado para aceitar só EVM; aqui o par SOL nativo → SOL embrulhado na Base atravessa pelo bridge canônico da Base em vez do agregador. Conecta por carteira injetada, Coinbase Wallet ou WalletConnect. Hoje em devnet.",
+    stack: ["Next.js", "TypeScript", "wagmi", "viem", "LI.FI SDK", "Solana"],
     outcome:
-      "Catálogo e gestão de estoque para cliente real de streetwear — pedidos via WhatsApp, auth SSR com Supabase.",
-    badge: "Em produção · cliente real",
-    badgeShort: "PROD",
-    href: "https://www.fiveoout.com.br",
-    repo: "https://github.com/Bielcx/fiveout-dashboard",
-    screenshotSrc: "/screenshots/fiveout.png",
-    screenshotMobileSrc: "/screenshots/fiveout-mobile.png",
+      "Bridge cross-chain Ethereum ↔ Base ↔ Solana com catálogo de ativos carregado do LI.FI em runtime — o par Solana usa o bridge canônico da Base.",
+    badge: "Devnet · produto próprio",
+    badgeShort: "DEMO",
+    href: "https://doabridge.com",
+    repo: "https://github.com/Bielcx/doabridge",
+    screenshotSrc: "/screenshots/doabridge.png",
+    screenshotMobileSrc: "/screenshots/doabridge-mobile.png",
     terminalHeader: true,
   },
   {
-    slug: "sizr",
-    title: "Sizr",
+    slug: "aros",
+    title: "Aros",
     year: "2026",
     description:
-      "Configurador 3D paramétrico para quem vende sob medida — o cliente arrasta as dimensões e vê a peça girando em tempo real, dentro das faixas de produção que a loja define. Três geometrias (caixa, plano, cilindro) cobrem de embalagem a vidro, painel e bancada; o volume, a área e o preço saem da própria fórmula, sem código por tipo de produto. O pedido inteiro fica codificado na URL, então o link reabre exatamente o que o cliente montou. O mesmo build estático serve a landing e um modo embed que roda por iframe no site de terceiros. Sem backend, sem banco.",
-    stack: ["React 19", "Three.js", "R3F", "TypeScript", "Vite"],
+      "Botão de checkout em USDC na rede Base para quem fatura do exterior — o lojista cola o componente no site e passa a receber em dólar digital, com liquidação em segundos, taxa abaixo de um centavo e sem chargeback nem operadora no meio. Zero backend e zero banco de dados, por decisão de produto: depois de instalado o kit não tem servidor para cair. O hash do userOp é a própria referência do pedido, e o recibo fica verificável on-chain sem servidor nenhum. Monorepo com a biblioteca (React e JS puro) e o site de demonstração. MIT, em testnet.",
+    stack: ["TypeScript", "Base", "USDC", "ERC-8021", "React", "Monorepo"],
     outcome:
-      "Configurador 3D paramétrico embedável por iframe — pedido codificado na URL, build estático sem backend.",
-    badge: "Em produção · produto próprio",
-    badgeShort: "PROD",
-    href: "https://sizr-three.vercel.app",
-    repo: "https://github.com/Bielcx/sizr",
-    screenshotSrc: "/screenshots/sizr.png",
-    screenshotMobileSrc: "/screenshots/sizr-mobile.png",
+      "Checkout em USDC na Base empacotado como biblioteca — sem backend, sem banco, recibo verificável on-chain.",
+    badge: "Testnet · open source (MIT)",
+    badgeShort: "DEMO",
+    href: "https://aros-site.vercel.app",
+    repo: "https://github.com/Bielcx/Aros",
+    screenshotSrc: "/screenshots/aros.png",
+    screenshotMobileSrc: "/screenshots/aros-mobile.png",
     terminalHeader: true,
   },
   {
-    slug: "voha",
-    title: "Voha",
+    // ponytail: entrada de COMUNIDADE, não de trabalho entregue — e o texto
+    // diz isso com todas as letras de propósito. A contribuição de código na
+    // org até aqui é uma PR de README ainda aberta; reivindicar o site da DAO
+    // como obra própria seria falso. Se um dia houver código merged, isto
+    // vira um projeto normal com trilha de PRs, como o SkateHive.
+    slug: "gnars",
+    title: "Gnars DAO",
     year: "2026",
     description:
-      "Plataforma SaaS mobile-first para planejamento, aprovação e agendamento de conteúdo no Instagram — calendário editorial, fluxo de aprovação por cliente e biblioteca de mídia centralizada. Backend em produção (Supabase + Cloudflare R2); interface em desenvolvimento ativo, hoje validada com dados fictícios.",
-    stack: ["Next.js", "TypeScript", "Supabase", "Cloudflare R2", "PostgreSQL"],
+      "DAO de esportes de ação na rede Base, construída sobre a arquitetura Nouns Builder: um leilão diário cunha um NFT, e o tesouro banca skatista, snowboarder e surfista direto, sem marca patrocinadora no meio. Governança, tesouro, propostas e loja vivem on-chain. Participo da comunidade e acompanho a governança — é o ecossistema em que eu ando, não um trabalho que entreguei.",
+    stack: ["Base", "Nouns Builder", "Governança on-chain", "NFT"],
     outcome:
-      "Planejamento e aprovação de conteúdo para Instagram, com calendário editorial e fluxo de aprovação por cliente — backend em produção (Supabase + R2), interface em desenvolvimento ativo.",
-    wip: true,
-    href: "https://voha-lab.vercel.app",
-    repo: "https://github.com/Bielcx/voha-lab",
-    screenshotSrc: "/screenshots/voha.png",
-    screenshotMobileSrc: "/screenshots/voha-mobile.png",
-    terminalHeader: true,
-  },
-  {
-    slug: "suga",
-    title: "Suga Odontologia",
-    year: "2026",
-    description:
-      "Landing page da Suga Odontologia, clínica em Pompeia/SP — página única com hero em tela cheia, trilho de tratamentos preso ao scroll e cada card abrindo o WhatsApp com a mensagem já preenchida. Estática de verdade: HTML, CSS e JS puro, sem build nem dependência instalada. O fundo animado da hero é o shader Light Rays rodando em WebGL cru, com duas correções de geometria para não morrer em tela de celular.",
-    stack: ["HTML", "CSS", "JavaScript", "WebGL", "GSAP"],
-    outcome:
-      "Landing de conversão para clínica odontológica — CTAs direto no WhatsApp, hero em WebGL, site estático sem build nem mensalidade.",
-    badge: "Em produção · cliente real",
-    badgeShort: "PROD",
-    href: "https://suga-odontologia.vercel.app",
-    repo: "https://github.com/Bielcx/SugaOdontologia",
-    screenshotSrc: "/screenshots/suga.png",
-    screenshotMobileSrc: "/screenshots/suga-mobile.png",
+      "DAO de esportes de ação na Base que banca atletas por leilão diário de NFT — participo da comunidade e da governança.",
+    badge: "Comunidade · governança on-chain",
+    badgeShort: "DAO",
+    href: "https://gnars.wtf",
+    repo: "https://github.com/gnars-dao/gnars-frontend",
+    screenshotSrc: "/screenshots/gnars.png",
+    screenshotMobileSrc: "/screenshots/gnars-mobile.png",
     terminalHeader: true,
   },
 ];

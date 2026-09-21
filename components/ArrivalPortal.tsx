@@ -22,11 +22,6 @@ import { PORTAL_FRAG } from "@/components/portalShader"
  * ligado por um script inline no `layout.tsx` antes de qualquer pintura. Este
  * componente assume o lugar dele assim que o primeiro quadro do canvas sai —
  * é o `soltarCapa()`.
- *
- * **O `TerminalIntro` roda por baixo, desde o começo.** Não há sequência a
- * coordenar: a página inteira já está viva atrás do portal, e o que se vê
- * quando ele fecha é o terminal já digitando. Encadear os dois (esperar o
- * portal para começar o intro) só somaria os dois tempos.
  */
 
 /** De onde a viagem pode vir. Sem isso, o portal vira susto aleatório. */

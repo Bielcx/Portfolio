@@ -3,17 +3,13 @@
 import { useRef } from "react";
 import Image from "next/image";
 import { motion, useScroll, useTransform } from "motion/react";
-import {
-  EnvelopeSimple,
-  GithubLogo,
-  LinkedinLogo,
-} from "@phosphor-icons/react";
+import { EnvelopeSimple, GithubLogo, XLogo } from "@phosphor-icons/react";
 
 type Profile = {
   name: string;
   email: string;
   github: string;
-  linkedin: string;
+  x: string;
 };
 
 export default function HeroSection({ profile }: { profile: Profile }) {
@@ -57,9 +53,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="uppercase font-black text-ink tracking-[-0.01em] leading-[1.05] text-[clamp(48px,6.5vw,84px)] mb-4"
           >
-            Gabriel
-            <br />
-            Cavalcanti
+            Bielcx
           </motion.h1>
 
           <motion.p
@@ -68,7 +62,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             transition={{ duration: 0.4, delay: 0.3 }}
             className="font-mono text-sm text-ink-muted mb-2"
           >
-            Full Stack Developer
+            Full Stack Developer · Web3
           </motion.p>
 
           <motion.p
@@ -77,46 +71,43 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             transition={{ duration: 0.4, delay: 0.4 }}
             className="font-mono text-sm text-ink-muted max-w-[420px] mx-auto leading-7 mb-8 md:mx-0"
           >
-            Front, back e deploy em produção — de produtos para clientes
-            reais a contribuições em projetos open source.
+            Front, back e on-chain — produtos open source na Hive e
+            aplicações web3 em produção.
           </motion.p>
 
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.4, delay: 0.65 }}
-            className="flex items-center justify-center gap-6 md:justify-start"
+            // Só os ícones. O -ml puxa a fileira de volta para a margem do
+            // texto: cada ícone de 18px vive centrado numa área de toque de
+            // 44px, então sobram 13px de respiro à esquerda do primeiro.
+            className="flex items-center justify-center md:justify-start md:-ml-[13px]"
           >
             <a
               href={profile.github}
               target="_blank"
               rel="noreferrer"
-              className="group flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
+              aria-label="GitHub"
+              className="flex size-11 items-center justify-center text-brand hover:text-ink transition-colors"
             >
-              <GithubLogo size={14} weight="bold" className="!text-brand" />
-              <span className="relative after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-brand after:transition-all after:duration-300 group-hover:after:w-full">
-                GitHub
-              </span>
-            </a>
-            <a
-              href={profile.linkedin}
-              target="_blank"
-              rel="noreferrer"
-              className="group flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
-            >
-              <LinkedinLogo size={14} weight="bold" className="!text-brand" />
-              <span className="relative after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-brand after:transition-all after:duration-300 group-hover:after:w-full">
-                LinkedIn
-              </span>
+              <GithubLogo size={18} weight="bold" />
             </a>
             <a
               href={`mailto:${profile.email}`}
-              className="group flex min-h-11 items-center gap-2 font-mono text-xs text-ink-muted hover:text-ink transition-colors"
+              aria-label="Email"
+              className="flex size-11 items-center justify-center text-brand hover:text-ink transition-colors"
             >
-              <EnvelopeSimple size={14} weight="bold" className="!text-brand" />
-              <span className="relative after:absolute after:-bottom-0.5 after:left-0 after:h-px after:w-0 after:bg-brand after:transition-all after:duration-300 group-hover:after:w-full">
-                Email
-              </span>
+              <EnvelopeSimple size={18} weight="bold" />
+            </a>
+            <a
+              href={profile.x}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="X"
+              className="flex size-11 items-center justify-center text-brand hover:text-ink transition-colors"
+            >
+              <XLogo size={18} weight="bold" />
             </a>
           </motion.div>
         </div>
