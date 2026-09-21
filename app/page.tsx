@@ -16,37 +16,20 @@ const profile = {
 export default function Home() {
   return (
       <main className="relative w-full min-h-screen bg-surface text-ink">
-        {/* O FUNDO DO SITE — as quatro camadas do handoff da hero, na ordem:
-            holofote, banho de acento, grão e vinheta. Todas leem tokens, então
-            a troca de tema já as leva junto.
-
-            É `fixed` com `100lvh`, e não `inset-0`, pelo mesmo motivo de antes:
-            no Safari do iOS a barra de endereço recolhe ao rolar e a viewport
-            cresce de uma vez; `lvh` é a altura com a barra recolhida, constante
-            durante a rolagem, então o holofote não dá um salto no meio.
-
-            Aqui morava o RippleGrid (WebGL). Ele saiu com o redesign — o fundo
-            agora é o do handoff — mas o componente segue no repositório. */}
-        <div
-          aria-hidden
-          className="pointer-events-none fixed inset-x-0 top-0 h-[100lvh] overflow-hidden"
-        >
-          <div className="bg-spot absolute inset-0" />
-          <div className="bg-wash absolute inset-0" />
-          <div className="grain absolute inset-0" />
-          <div className="bg-vignette absolute inset-0" />
-        </div>
-
         <AnimatedThemeToggler className="theme-toggle fixed top-6 right-6 z-50" />
 
         <div className="relative z-10">
-          <HeroSection profile={profile} />
+          {/* O hero é um cartão de 1200×620 com raio de 28px, então precisa
+              de folga em volta para o raio existir. */}
+          <div className="px-4 pt-4 min-[900px]:px-6 min-[900px]:pt-6">
+            <HeroSection profile={profile} />
+          </div>
 
           <SelectedWork />
 
           <section
             id="contact"
-            className="px-6 min-[900px]:px-16 py-24 border-t border-line"
+            className="mx-auto w-full max-w-[1200px] px-6 min-[900px]:px-16 py-24 border-t border-line"
           >
             <p className="font-mono text-xs text-ink-faint tracking-[0.2em] uppercase mb-8">
               Contact
@@ -111,7 +94,7 @@ export default function Home() {
             </div>
           </section>
 
-          <footer className="px-6 min-[900px]:px-16 py-8 border-t border-line flex items-center justify-between">
+          <footer className="mx-auto w-full max-w-[1200px] px-6 min-[900px]:px-16 py-8 border-t border-line flex items-center justify-between">
             <span className="font-mono text-xs text-ink-faint">
               © {new Date().getFullYear()} Gabriel Cavalcanti
             </span>

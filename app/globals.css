@@ -22,10 +22,7 @@
   --color-line-strong: var(--line-strong);
   --color-brand: var(--brand);
   --color-ok: var(--ok);
-  /* O terracota cheio do handoff, IGUAL nos dois temas: e o preenchimento do
-     CTA primario e dos cantos do frame, nunca texto sobre o fundo. Quem e
-     texto e o --brand, que escurece no claro para passar no AA. */
-  --color-brand-solid: var(--brand-solid);
+  /* A cor que vai EM CIMA do acento — o texto do CTA primário. */
   --color-on-brand: var(--on-brand);
 
   --color-background: var(--background);
@@ -72,12 +69,11 @@
   --ink-faint: #a19786;
   --line: rgba(245, 234, 216, 0.08);
   --line-strong: #2e2b25;
-  /* Accent do tema: --brand é o terracota (texto e realce), --ok é o sage
-     (o `$` do terminal, o `online`, o PR merged). Agora carregam hex
-     diferentes — antes eram o mesmo verde. */
+  /* Os dois acentos do handoff: --brand é o terracota (CTA, realce, hover) e
+     --ok é o sage (o `$` do terminal, o `online`, o PR merged). O terracota é
+     o MESMO nos dois temas — está na tabela de tokens como valor comum. */
   --brand: #c67139;
   --ok: #8fa073;
-  --brand-solid: #c67139;
   --on-brand: #0c0906;
   /* Holofote, banho de acento e vinheta da hero — as tres camadas de fundo do
      handoff. Ficam aqui porque mudam de tema; a hero so as empilha. */
@@ -150,12 +146,8 @@
   --ink-faint: #645c50;
   --line: rgba(32, 30, 29, 0.14);
   --line-strong: rgba(32, 30, 29, 0.22);
-  /* O terracota do handoff da 3,2:1 sobre o creme — reprova no AA como texto.
-     Entao o --brand do claro e o tom "pressed" da mesma familia (#8c491a,
-     5,3:1), e o --brand-solid, que so e preenchimento, segue o original. */
-  --brand: #8c491a;
+  --brand: #c67139;
   --ok: #56633f;
-  --brand-solid: #c67139;
   --on-brand: #f5ead8;
   --spot: rgba(255, 252, 246, 0.95);
   --wash: rgba(198, 113, 57, 0.14);
@@ -245,10 +237,12 @@
     mix-blend-mode: var(--grain-blend);
   }
 
-  /* As outras tres camadas do fundo, na ordem em que o handoff as empilha:
-     holofote, banho de acento e vinheta. São classes, e não style inline,
-     porque `mix-blend-mode: var(...)` não passa pelo tipo CSSProperties do
-     React — e porque as quatro só fazem sentido juntas. */
+  /* As outras três camadas do fundo DA HERO, na ordem em que o handoff as
+     empilha: holofote, banho de acento e vinheta. Elas vivem dentro do cartão
+     do hero, não na página — o handoff as desenha nas 4 camadas `inset: 0` da
+     caixa de 1200×620, e espalhá-las pela página inteira suja todas as cores.
+     São classes, e não style inline, porque `mix-blend-mode: var(...)` não
+     passa pelo tipo CSSProperties do React. */
   .bg-spot {
     background: radial-gradient(
       760px 620px at 26% 34%,

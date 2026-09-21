@@ -395,7 +395,7 @@ export default function SelectedWork() {
 
   return (
     <>
-      <section id="work" className="px-6 min-[900px]:px-16 py-24">
+      <section id="work" className="mx-auto w-full max-w-[1200px] px-6 min-[900px]:px-16 py-24">
         <div className="mb-10 flex items-baseline justify-between border-b border-line pb-4">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-brand">
             Selected Work
