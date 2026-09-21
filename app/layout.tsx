@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import { ArrivalPortal } from "@/components/ArrivalPortal";
 import { cn } from "@/lib/utils";
 
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-mono" });
@@ -66,7 +67,36 @@ export default function RootLayout({
         "font-mono"
       )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <head>
+        {/* A CAPA DA CHEGADA, ligada antes da primeira pintura.
+
+            Tem de ser script inline: o `ArrivalPortal` so monta depois da
+            hidratacao, e quem vem pelo portal do portfolio comercial veria a
+            pagina inteira antes de o portal aparecer por cima — o contrario da
+            ilusao. Aqui isto roda no parse do <head>, entao o primeiro quadro
+            que o visitante ve ja e a capa.
+
+            O timeout e rede de seguranca, nao coreografia: se o JS do bundle
+            falhar, a capa sai sozinha em 2,5s e o site aparece. Pagina
+            escondida por causa de um enfeite e o pior desfecho possivel. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{
+  var r = document.referrer && new URL(document.referrer).host;
+  var meu = ["gabriel.doabridge.com","bielcx-portfolio.vercel.app"];
+  var ok = r && (meu.indexOf(r) > -1 || /^(localhost|127\\.0\\.0\\.1):\\d+$/.test(r));
+  if (!ok) return;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  document.documentElement.dataset.portal = "1";
+  setTimeout(function(){ delete document.documentElement.dataset.portal }, 2500);
+}catch(e){}})()`,
+          }}
+        />
+      </head>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <ArrivalPortal />
+      </body>
     </html>
   );
 }

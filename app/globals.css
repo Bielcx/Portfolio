@@ -283,3 +283,26 @@ body.modal-open .theme-toggle {
     rotate: 1turn;
   }
 }
+
+/* A CAPA DA CHEGADA — quem cobre a tela no primeiro quadro de quem vem pelo
+   portal do portfolio comercial.
+
+   Ela existe porque o React nao chega a tempo: o componente que desenha o
+   portal (`ArrivalPortal`) so monta depois da hidratacao, e ate la a pagina ja
+   apareceu. Quem liga isto e um script inline no `layout.tsx`, antes de
+   qualquer pintura; quem desliga e o proprio componente, no primeiro quadro do
+   canvas, ou um timeout de seguranca la mesmo — a pagina nao pode ficar
+   escondida se o JS falhar.
+
+   A cor e o `--surface` do tema ESCURO mesmo no claro, de proposito: e a cor
+   com que o outro site termina a animacao, e ele nao tem como saber qual tema
+   este visitante tem (outra origem, outro localStorage). Quem chega no claro
+   ve o disco escuro encolher e revelar o papel. */
+html[data-portal]::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #141413;
+  pointer-events: none;
+}
