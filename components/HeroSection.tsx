@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ArrowUUpLeft, EnvelopeSimple, XLogo } from "@phosphor-icons/react";
 
 type Profile = {
   email: string;
@@ -79,28 +80,43 @@ export default function HeroSection({ profile }: { profile: Profile }) {
           </dl>
 
           {/* Os três caminhos, em ordem de intenção: falar comigo, ver o lado
-              comercial, me achar fora daqui. */}
-          <div className="mt-1 flex flex-wrap items-center gap-3">
+              comercial, me achar fora daqui.
+
+              Só os ícones, os três iguais — o handoff tinha uma pílula cheia e
+              uma vazada aqui, e o usuário pediu a fileira. O `-ml` puxa a
+              fileira de volta para a margem do texto: cada ícone de 18px vive
+              centrado numa área de toque de 44px, então sobram 13px de respiro
+              à esquerda do primeiro.
+
+              O `title` não é decoração: sem o rótulo, "envelope" e "seta para
+              trás" são adivinhação. Ele dá o balão no mouse, e o `aria-label`
+              dá o nome no leitor de tela. */}
+          <div className="-ml-[13px] mt-1 flex items-center">
             <a
               href={`mailto:${profile.email}`}
-              className="inline-flex items-center gap-2.5 rounded-full bg-brand px-[26px] py-3.5 text-sm font-medium tracking-[0.04em] text-on-brand transition-colors hover:bg-[#b2622d] active:bg-[#8c491a]"
+              aria-label="Entrar em contato por email"
+              title="entrar em contato"
+              className="flex size-11 items-center justify-center text-brand transition-colors hover:text-ink"
             >
-              entrar em contato ↗
+              <EnvelopeSimple size={18} weight="bold" />
             </a>
             <a
               href={profile.web2}
-              className="inline-flex items-center gap-2.5 rounded-full border border-line-strong px-6 py-[13px] text-sm tracking-[0.04em] text-ink-muted transition-colors hover:bg-ink/[0.07]"
+              aria-label="Ir para o portfólio web2"
+              title="web2"
+              className="flex size-11 items-center justify-center text-brand transition-colors hover:text-ink"
             >
-              ← web2
+              <ArrowUUpLeft size={18} weight="bold" />
             </a>
             <a
               href={profile.x}
               target="_blank"
               rel="noreferrer"
               aria-label="Perfil no X"
-              className="inline-flex items-center rounded-full px-[18px] py-[13px] text-sm tracking-[0.04em] text-ink-faint transition-colors hover:text-ink"
+              title="x"
+              className="flex size-11 items-center justify-center text-brand transition-colors hover:text-ink"
             >
-              x
+              <XLogo size={18} weight="bold" />
             </a>
           </div>
         </div>
