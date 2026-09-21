@@ -15,15 +15,29 @@ const profile = {
 
 export default function Home() {
   return (
-      <main className="relative w-full min-h-screen bg-surface text-ink">
+      <main className="relative w-full min-h-screen overflow-hidden bg-surface text-ink">
+        {/* O FUNDO — as quatro camadas do handoff, na ordem: holofote, banho de
+            acento, grão e vinheta. Elas cobrem a PÁGINA INTEIRA, que é o ponto:
+            o hero não é uma caixa com fundo próprio, é uma seção sobre este
+            fundo.
+
+            `absolute inset-0` e não `fixed`, e isso importa: preso na viewport,
+            o gradiente de 120%×110% se refaz a cada tela e a vinheta pulsa em
+            cima do conteúdo a cada rolagem — foi o que deixou tudo empoeirado
+            na primeira tentativa. Esticado no documento, o mesmo gradiente se
+            espalha pela altura toda e vira o que o handoff desenha. O
+            `overflow-hidden` no <main> é o par disso. */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="bg-spot absolute inset-0" />
+          <div className="bg-wash absolute inset-0" />
+          <div className="grain absolute inset-0" />
+          <div className="bg-vignette absolute inset-0" />
+        </div>
+
         <AnimatedThemeToggler className="theme-toggle fixed top-6 right-6 z-50" />
 
         <div className="relative z-10">
-          {/* O hero é um cartão de 1200×620 com raio de 28px, então precisa
-              de folga em volta para o raio existir. */}
-          <div className="px-4 pt-4 min-[900px]:px-6 min-[900px]:pt-6">
-            <HeroSection profile={profile} />
-          </div>
+          <HeroSection profile={profile} />
 
           <SelectedWork />
 
