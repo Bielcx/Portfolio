@@ -34,8 +34,9 @@ const telemetry = ["lat 38ms", "node br-01", "uptime 99.9%"];
  * seção sobre esse fundo, não uma caixa com fundo próprio.
  *
  * As medidas são as do handoff: sarjeta de 40px nas duas barras, conteúdo em
- * 64px, frame de 300×420. A partir de 900px conteúdo e frame ficam lado a lado;
- * abaixo disso empilham.
+ * 64px, e a caixa da direita em 300×420 — que era o frame de captura e hoje é o
+ * pacote de figurinha. A partir de 900px ela fica ao lado do conteúdo; abaixo
+ * disso empilham.
  */
 export default function HeroSection({ profile }: { profile: Profile }) {
   return (
@@ -104,14 +105,18 @@ export default function HeroSection({ profile }: { profile: Profile }) {
           </div>
         </div>
 
-        {/* O FRAME DE CAPTURA — escuro NOS DOIS TEMAS, e isso não é escolha de
-            cor: o recorte do avatar tem a camiseta preta transparente, então
-            qualquer fundo claro atrás vazaria através da figura.
+        {/* O PACOTE DE FIGURINHA — o boneco é a arte impressa nele.
+
+            O papelão é escuro NOS DOIS TEMAS, e isso não é escolha de cor: o
+            recorte do avatar tem a camiseta preta transparente, então qualquer
+            fundo claro atrás vazaria através da figura. Aqui isso deixou de ser
+            uma restrição e virou o material — pacote preto com prensa terracota.
 
             No estreito a altura é `35svh` em vez de fixa: com 340px o pé do
             boneco caía abaixo da dobra em aparelho pequeno. */}
-        <div className="relative h-[35svh] max-h-[340px] w-[240px] shrink-0 self-center overflow-hidden rounded-3xl border border-dashed border-[color:var(--frame-border)] bg-[linear-gradient(180deg,#14120f,#000)] min-[900px]:h-[420px] min-[900px]:max-h-none min-[900px]:w-[300px]">
-          <div className="scan-line absolute inset-x-0 top-0 h-16 bg-[linear-gradient(180deg,rgba(143,160,115,0.22),transparent)]" />
+        <div className="relative h-[35svh] max-h-[340px] w-[240px] shrink-0 self-center overflow-hidden rounded-xl bg-[linear-gradient(180deg,#14120f,#000)] min-[900px]:h-[420px] min-[900px]:max-h-none min-[900px]:w-[300px]">
+          {/* A prensa de cima, com a linha de rasgar logo abaixo dela. */}
+          <div className="pack-crimp absolute inset-x-0 top-0 z-10 h-[26px] border-b border-dashed border-black/40 bg-brand" />
 
           <Image
             src="/biel-avatar.png"
@@ -119,19 +124,22 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             width={240}
             height={352}
             priority
-            className="absolute bottom-[22px] left-1/2 h-[80%] w-auto -translate-x-1/2 object-contain min-[900px]:h-[352px]"
+            className="absolute bottom-[38px] left-1/2 h-[72%] w-auto -translate-x-1/2 object-contain min-[900px]:h-[330px]"
           />
 
-          {/* Os quatro cantos em L. */}
-          <span className="absolute left-4 top-3.5 size-[18px] border-l-2 border-t-2 border-brand" />
-          <span className="absolute right-4 top-3.5 size-[18px] border-r-2 border-t-2 border-brand" />
-          <span className="absolute bottom-3.5 left-4 size-[18px] border-b-2 border-l-2 border-brand" />
-          <span className="absolute bottom-3.5 right-4 size-[18px] border-b-2 border-r-2 border-brand" />
-
-          <div className="absolute inset-x-0 bottom-0 flex justify-between bg-[linear-gradient(to_top,#000_60%,transparent)] px-5 py-3.5 text-[11px] tracking-[0.1em] text-[#645c50]">
-            <span>agent.bielcx</span>
-            <span className="text-[#aebf92]">● live</span>
+          {/* O rótulo impresso, sobre um degradê que o separa da arte. */}
+          <div className="absolute inset-x-0 bottom-[26px] flex justify-between bg-[linear-gradient(to_top,#000_60%,transparent)] px-5 pb-2.5 pt-6 text-[11px] tracking-[0.1em] text-[#645c50]">
+            <span>bielcx · série 01</span>
+            <span className="text-[#aebf92]">● foil</span>
           </div>
+
+          {/* A prensa de baixo. */}
+          <div className="pack-crimp absolute inset-x-0 bottom-0 z-10 h-[26px] bg-brand" />
+
+          <div
+            aria-hidden
+            className="foil-sweep pointer-events-none absolute inset-0 z-20"
+          />
         </div>
       </div>
 

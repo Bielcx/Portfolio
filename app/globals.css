@@ -81,8 +81,6 @@
   --wash: rgba(198, 113, 57, 0.1);
   --vignette: rgba(0, 0, 0, 0.9);
   --vignette-stop: 18%;
-  /* A borda tracejada do frame do avatar. */
-  --frame-border: rgba(143, 160, 115, 0.35);
   --grain-opacity: 0.12;
   --grain-blend: normal;
   /* RippleGrid background lines — split per theme so each can be tuned against
@@ -153,7 +151,6 @@
   --wash: rgba(198, 113, 57, 0.14);
   --vignette: rgba(71, 66, 56, 0.26);
   --vignette-stop: 20%;
-  --frame-border: rgba(86, 99, 63, 0.5);
   --grain-opacity: 0.07;
   --grain-blend: multiply;
   --grid: #000000;
@@ -265,23 +262,53 @@
     );
   }
 
-  /* A linha de varredura do frame do avatar. Sob reduced-motion ela para no
-     lugar em vez de sumir: a faixa parada ainda diz que aquilo é uma captura. */
-  .scan-line {
-    animation: scan 4.6s linear infinite;
+  /* O PACOTE DE FIGURINHA — as duas peças que não saem de utilitário solto.
+
+     `.pack-crimp` é a prensa: as ranhuras finas que a máquina deixa ao selar o
+     topo e a base do pacote. São elas que fazem a forma ler como embalagem, e
+     não como um retângulo com uma faixa colorida.
+
+     `.foil-sweep` é o brilho holográfico atravessando na diagonal. Ele herda os
+     4,6s da linha de varredura que havia aqui de propósito — é o mesmo respiro
+     que o handoff pedia, com outra metáfora por cima. O `screen` é o que faz o
+     foil ACENDER sobre o papelão escuro; com `overlay` ele afundaria, porque
+     overlay preserva o escuro de baixo. A faixa começa e termina fora da caixa,
+     então existe um intervalo sem brilho nenhum — é assim que foil de verdade
+     se comporta, e não um vazio a preencher. */
+  .pack-crimp {
+    background-image: repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.32) 0 2px,
+      transparent 2px 5px
+    );
   }
-  @keyframes scan {
+
+  .foil-sweep {
+    background: linear-gradient(
+      115deg,
+      transparent 38%,
+      rgba(245, 234, 216, 0.1) 44%,
+      rgba(198, 113, 57, 0.42) 48%,
+      rgba(143, 160, 115, 0.38) 53%,
+      rgba(245, 234, 216, 0.1) 59%,
+      transparent 65%
+    );
+    mix-blend-mode: screen;
+    animation: foil 4.6s linear infinite;
+  }
+  @keyframes foil {
     from {
-      transform: translateY(-10%);
+      transform: translateX(-100%);
     }
     to {
-      transform: translateY(420%);
+      transform: translateX(100%);
     }
   }
+  /* Sob reduced-motion o foil para no meio do pacote em vez de sumir: a faixa
+     parada ainda diz que aquilo é uma superfície brilhante. */
   @media (prefers-reduced-motion: reduce) {
-    .scan-line {
+    .foil-sweep {
       animation: none;
-      opacity: 0.5;
     }
   }
 
