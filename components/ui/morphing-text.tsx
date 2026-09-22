@@ -5,8 +5,11 @@ import { useReducedMotion } from "motion/react"
 
 import { cn } from "@/lib/utils"
 
-const morphTime = 1.5
-const cooldownTime = 0.5
+// Mais lento que o padrão do Magic UI (1.5 / 0.5): `morphTime` é a duração da
+// transição em si, `cooldownTime` é quanto cada nome fica parado e legível
+// antes da próxima.
+const morphTime = 2.8
+const cooldownTime = 1.4
 
 const useMorphingText = (texts: string[]) => {
   const textIndexRef = useRef(0)
