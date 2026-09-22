@@ -195,9 +195,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
                 </div>
 
                 <div className="agent-pack__gloss" />
-                <div className="agent-pack__shade" />
-                <div className="agent-pack__sheen" />
-              </div>
+                <div className="agent-pack__shade" />              </div>
             </div>
           </div>
         </div>

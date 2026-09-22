@@ -495,20 +495,6 @@
     );
     mix-blend-mode: overlay;
   }
-  .agent-pack__sheen {
-    top: -20%;
-    bottom: -20%;
-    left: 0;
-    width: 56px;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.6),
-      transparent
-    );
-    mix-blend-mode: screen;
-    animation: bx-sheen 5.4s ease-in-out infinite;
-  }
 
   @keyframes bx-pack-float {
     0%,
@@ -519,26 +505,13 @@
       transform: rotateY(-7deg) rotateX(3deg) translateY(-14px);
     }
   }
-  @keyframes bx-sheen {
-    0% {
-      transform: translateX(-140%) skewX(-18deg);
-    }
-    55%,
-    100% {
-      transform: translateX(240%) skewX(-18deg);
-    }
-  }
-  /* Sob reduced-motion o pacote fica parado na inclinação inicial e o brilho
-     some — um objeto girando sozinho é exatamente o que essa preferência pede
-     para não acontecer. */
+  /* Sob reduced-motion o pacote fica parado na inclinação inicial — um objeto
+     girando sozinho é exatamente o que essa preferência pede para não
+     acontecer. */
   @media (prefers-reduced-motion: reduce) {
     .agent-pack__float {
       animation: none;
       transform: rotateY(-14deg) rotateX(6deg);
-    }
-    .agent-pack__sheen {
-      animation: none;
-      opacity: 0;
     }
   }
 
