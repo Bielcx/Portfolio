@@ -35,7 +35,9 @@ type Project = {
   description: string;
   stack: string[];
   href: string;
-  repo: string;
+  // ponytail: opcional porque o SwapsPro é repo privado — link de Source ali
+  // daria 404 em quem visita. Sem repo, o botão simplesmente não aparece.
+  repo?: string;
   screenshotSrc: string;
   // ponytail: real mobile-viewport screenshot for the Iphone mock in the
   // panel — falls back to `screenshotSrc` (the desktop shot) as a placeholder
@@ -123,6 +125,29 @@ const projects: Project[] = [
     screenshotMobileSrc: "/screenshots/skatehive-mobile.png",
     terminalHeader: true,
     contributions: skatehiveContributions,
+  },
+  {
+    // ponytail: entrada de TRABALHO ENTREGUE em produto de terceiro, e sem
+    // `repo` de propósito — `coinmastersguild/swapspro` é privado, então
+    // botão de Source ali daria 404. A autoria está no commit `0fd1e9e` do
+    // master (author Gabriel, committer sktbrd): a PR #167 consta "closed"
+    // no GitHub porque o merge foi squash direto no master, que não fecha a
+    // PR pelo fluxo normal. Não confie no estado da PR se for reconferir.
+    // O motor está no ar — o `/launch` de produção serve o seletor Meteora.
+    slug: "swapspro",
+    title: "SwapsPro",
+    year: "2026",
+    description:
+      "Motor de lançamento de token na Solana dentro do SwapsPro, agregador de swap cross-chain da Coinmasters Guild. A rota de launch já tinha o caminho EVM pelo Clanker; eu escrevi o caminho Solana, sobre a Dynamic Bonding Curve da Meteora, convivendo com o antigo no mesmo formulário. São dois presets: curva de IPO, que monta a bonding curve a partir do valuation da última rodada e de um desconto de entrada, e comunidade, com oferta fixa e liquidez travada na migração. O `baseMint` nasce no browser e a transação vai parcialmente assinada por ele antes de chegar no Phantom — a carteira aprova, não cunha. A taxa de parceiro e o destino dela aparecem na tela antes de qualquer assinatura. SOL na devnet, USDC na mainnet, e um fallback simulado só em devnet para quando a PDA de config da Meteora não existe.",
+    stack: ["Next.js", "TypeScript", "Solana", "Meteora DBC", "@solana/web3.js", "Phantom"],
+    outcome:
+      "Motor de launch de token na Solana via Meteora DBC entregue em produto de terceiro em produção — presets de curva, assinatura parcial no browser e taxa visível antes de assinar.",
+    badge: "Em produção · código fechado",
+    badgeShort: "PROD",
+    href: "https://swaps-pro-v6.vercel.app/launch",
+    screenshotSrc: "/screenshots/swapspro.png",
+    screenshotMobileSrc: "/screenshots/swapspro-mobile.png",
+    terminalHeader: true,
   },
   {
     slug: "doabridge",
@@ -559,14 +584,16 @@ export default function SelectedWork() {
                   >
                     Live <ArrowUpRight className="size-3" weight="bold" />
                   </a>
-                  <a
-                    href={active.repo}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex min-h-11 items-center gap-1.5 border border-line-strong px-4 text-ink-muted hover:text-ink hover:border-ink/50 transition-colors"
-                  >
-                    Source <ArrowUpRight className="size-3" weight="bold" />
-                  </a>
+                  {active.repo && (
+                    <a
+                      href={active.repo}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex min-h-11 items-center gap-1.5 border border-line-strong px-4 text-ink-muted hover:text-ink hover:border-ink/50 transition-colors"
+                    >
+                      Source <ArrowUpRight className="size-3" weight="bold" />
+                    </a>
+                  )}
                 </div>
 
                 <div>
@@ -630,7 +657,8 @@ export default function SelectedWork() {
                   ))}
                 </div>
 
-                {active.contributions && (
+                {/* trilha de PRs só faz sentido com repo público para linkar */}
+                {active.contributions && active.repo && (
                   <ContributionsSection
                     repo={active.repo}
                     items={active.contributions}
