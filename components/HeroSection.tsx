@@ -3,6 +3,7 @@ import Image from "next/image";
 // (usa createContext) e quebra o `collect page data` do build. O `/ssr` é a
 // mesma arte sem contexto.
 import { ArrowUUpLeft, EnvelopeSimple, XLogo } from "@phosphor-icons/react/ssr";
+import { MorphingText } from "./ui/morphing-text";
 
 type Profile = {
   email: string;
@@ -69,8 +70,25 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             <span>whoami</span>
           </p>
 
-          <h1 className="font-display text-[clamp(56px,11vw,112px)] leading-[0.94] tracking-[-0.02em] uppercase text-ink">
-            Bielcx
+          {/* O nick alterna entre o apelido e o nome. O `aria-label` no <h1> é
+              o que segura o nome acessível: os dois <span> do MorphingText
+              nascem VAZIOS e só recebem texto pelo rAF no cliente, então sem
+              ele o <h1> chega vazio no HTML e para o leitor de tela.
+
+              As sobrescritas de classe existem porque o padrão do Magic UI é
+              centrado, `font-sans`, 40pt, `max-w-3xl` e de altura fixa — aqui é
+              o nick da hero: à esquerda, Archivo Black, no mesmo clamp de
+              antes. A caixa vem da cópia invisível dentro do componente, então
+              aqui é só desligar as medidas dele (`h-auto`, `w-auto`,
+              `max-w-none`) e herdar o tamanho de fonte do <h1>. */}
+          <h1
+            aria-label="Bielcx — Gabriel Cavalcanti"
+            className="font-display text-[clamp(56px,11vw,112px)] leading-[0.94] tracking-[-0.02em] uppercase text-ink"
+          >
+            <MorphingText
+              texts={["Bielcx", "Gabriel"]}
+              className="mx-0 h-auto w-auto max-w-none text-left font-display text-[length:inherit] leading-[inherit] font-normal md:h-auto lg:text-[length:inherit]"
+            />
           </h1>
 
           <dl className="flex flex-col gap-[9px] text-sm leading-normal">
