@@ -1,5 +1,8 @@
 import Image from "next/image";
-import { ArrowUUpLeft, EnvelopeSimple, XLogo } from "@phosphor-icons/react";
+// O HeroSection é server component: a entrada raiz do phosphor é client-only
+// (usa createContext) e quebra o `collect page data` do build. O `/ssr` é a
+// mesma arte sem contexto.
+import { ArrowUUpLeft, EnvelopeSimple, XLogo } from "@phosphor-icons/react/ssr";
 
 type Profile = {
   email: string;
