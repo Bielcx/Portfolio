@@ -15,8 +15,8 @@ type Profile = {
 /** As três linhas chave/valor. Texto fixo, vindo do handoff. */
 const rows = [
   ["role", "Full Stack Developer · Web3"],
-  ["stack", "front · back · on-chain · agentes IA"],
-  ["chain", "Hive — open source em produção"],
+  ["scope", "end-to-end product — from interface to contract"],
+  ["chain", "EVM · Solana · Hive — multichain, in production"],
 ];
 
 /**
