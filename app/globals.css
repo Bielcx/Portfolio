@@ -262,53 +262,283 @@
     );
   }
 
-  /* O PACOTE DE FIGURINHA — as duas peças que não saem de utilitário solto.
+  /* O AGENT PACK — o pacote de mylar prateado que segura o avatar da hero.
 
-     `.pack-crimp` é a prensa: as ranhuras finas que a máquina deixa ao selar o
-     topo e a base do pacote. São elas que fazem a forma ler como embalagem, e
-     não como um retângulo com uma faixa colorida.
+     É um artboard de 300x420 FECHADO: as medidas de dentro (as prensas, a
+     janela de arte, a altura do boneco) são calibradas para essa caixa, e o
+     jeito de mudar o tamanho é escalar o conjunto, nunca mexer nos números.
+     A hero faz isso com `scale-[0.8]` abaixo de 900px.
 
-     `.foil-sweep` é o brilho holográfico atravessando na diagonal. Ele herda os
-     4,6s da linha de varredura que havia aqui de propósito — é o mesmo respiro
-     que o handoff pedia, com outra metáfora por cima. O `screen` é o que faz o
-     foil ACENDER sobre o papelão escuro; com `overlay` ele afundaria, porque
-     overlay preserva o escuro de baixo. A faixa começa e termina fora da caixa,
-     então existe um intervalo sem brilho nenhum — é assim que foil de verdade
-     se comporta, e não um vazio a preencher. */
-  .pack-crimp {
-    background-image: repeating-linear-gradient(
-      90deg,
-      rgba(0, 0, 0, 0.32) 0 2px,
-      transparent 2px 5px
+     Os hexadecimais são literais de propósito, e esta é a mesma exceção do
+     header Galaxy: o pacote é um objeto físico prateado, não uma superfície do
+     site — ele não segue o tema, nos dois ele é a mesma embalagem. Usar token
+     aqui pintaria o mylar de creme no tema claro.
+
+     A ordem das camadas importa: prensa e cantos, depois o texto impresso,
+     depois a janela, e só então os dois vidrados e o brilho que corre. Os três
+     últimos são `mix-blend-mode`, então precisam de tudo já desenhado embaixo. */
+  .agent-pack {
+    position: relative;
+    width: 300px;
+    height: 420px;
+    perspective: 1400px;
+  }
+  /* A flutuação mora numa camada só dela porque o `filter` cria contexto de
+     empilhamento: junto com o `mix-blend-mode` dos vidrados, os dois se anulam
+     se estiverem no mesmo elemento. */
+  .agent-pack__float {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+    animation: bx-pack-float 7s ease-in-out infinite;
+    filter: drop-shadow(0 34px 44px rgba(0, 0, 0, 0.55));
+  }
+  .agent-pack__foil {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    background: linear-gradient(
+      104deg,
+      #f6f8fa 0%,
+      #b4bac2 14%,
+      #83898f 26%,
+      #eef1f4 40%,
+      #9ca2aa 54%,
+      #dfe4e9 68%,
+      #767c84 82%,
+      #e8ebef 100%
     );
+    box-shadow:
+      0 30px 46px rgba(0, 0, 0, 0.55),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+  }
+  .agent-pack__foil > * {
+    position: absolute;
   }
 
-  .foil-sweep {
+  /* PRENSA — as ranhuras verticais que a máquina deixa ao selar. */
+  .agent-pack__crimp {
+    left: 0;
+    right: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.85) 0 1px,
+      rgba(94, 99, 106, 0.5) 1px 4px
+    );
+  }
+  .agent-pack__crimp--top {
+    top: 0;
+    height: 30px;
+    border-bottom: 1px solid rgba(70, 74, 80, 0.6);
+  }
+  .agent-pack__crimp--bottom {
+    bottom: 0;
+    height: 28px;
+    border-top: 1px solid rgba(70, 74, 80, 0.6);
+  }
+
+  /* Os quatro cantos amassados, logo abaixo e acima das prensas. */
+  .agent-pack__corner {
+    width: 26px;
+    height: 26px;
+  }
+  .agent-pack__corner--tl {
+    left: 0;
+    top: 24px;
+    background: linear-gradient(135deg, rgba(60, 64, 70, 0.55), transparent 70%);
+  }
+  .agent-pack__corner--tr {
+    right: 0;
+    top: 24px;
+    background: linear-gradient(225deg, rgba(60, 64, 70, 0.55), transparent 70%);
+  }
+  .agent-pack__corner--bl {
+    left: 0;
+    bottom: 22px;
+    background: linear-gradient(45deg, rgba(60, 64, 70, 0.55), transparent 70%);
+  }
+  .agent-pack__corner--br {
+    right: 0;
+    bottom: 22px;
+    background: linear-gradient(315deg, rgba(60, 64, 70, 0.55), transparent 70%);
+  }
+
+  /* IMPRESSO NO MYLAR — tinta escura sobre a prata. Creme aqui sumiria. */
+  .agent-pack__head {
+    left: 0;
+    right: 0;
+    top: 38px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+  .agent-pack__title {
+    font-family: var(--font-archivo), sans-serif;
+    font-size: 29px;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #23262b;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+  }
+  .agent-pack__sub {
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    white-space: nowrap;
+    color: #3b3f45;
+  }
+  .agent-pack__legend {
+    left: 0;
+    right: 0;
+    bottom: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    white-space: nowrap;
+    color: #23262b;
+  }
+
+  /* JANELA DE ARTE — o recorte escuro onde o boneco mora. Ele continua escuro
+     nos dois temas pelo motivo de sempre: a camiseta preta do recorte é
+     transparente, e fundo claro atrás vazaria através da figura. */
+  .agent-pack__window {
+    left: 26px;
+    right: 26px;
+    top: 92px;
+    bottom: 74px;
+    overflow: hidden;
+    border-radius: 6px;
+    background: #121417;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+      0 8px 18px rgba(0, 0, 0, 0.45);
+  }
+  .agent-pack__window > * {
+    position: absolute;
+  }
+  .agent-pack__glow {
+    inset: 0;
+    background: radial-gradient(
+      90% 70% at 50% 34%,
+      rgba(214, 220, 228, 0.4),
+      transparent 72%
+    );
+  }
+  .agent-pack__ribs {
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.12) 0 1px,
+      transparent 1px 7px
+    );
+  }
+  .agent-pack__art {
+    left: 50%;
+    bottom: 6px;
+    height: 204px;
+    width: auto;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.6));
+  }
+  .agent-pack__code {
+    left: 10px;
+    top: 9px;
+    font-size: 8px;
+    letter-spacing: 0.2em;
+    white-space: nowrap;
+    color: #c9d0d8;
+  }
+  .agent-pack__bar {
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 10px;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    white-space: nowrap;
+    color: #c9d0d8;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+  }
+
+  /* OS VIDRADOS E O BRILHO — as três camadas que fazem o mylar parecer mylar. */
+  .agent-pack__gloss {
+    inset: 0;
     background: linear-gradient(
-      115deg,
-      transparent 38%,
-      rgba(245, 234, 216, 0.1) 44%,
-      rgba(198, 113, 57, 0.42) 48%,
-      rgba(143, 160, 115, 0.38) 53%,
-      rgba(245, 234, 216, 0.1) 59%,
-      transparent 65%
+      90deg,
+      rgba(255, 255, 255, 0.55) 0 4%,
+      transparent 14%,
+      rgba(255, 255, 255, 0.2) 28%,
+      transparent 44%,
+      rgba(255, 255, 255, 0.14) 60%,
+      transparent 76%,
+      rgba(255, 255, 255, 0.5) 97%
     );
     mix-blend-mode: screen;
-    animation: foil 4.6s linear infinite;
   }
-  @keyframes foil {
-    from {
-      transform: translateX(-100%);
+  .agent-pack__shade {
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.35),
+      transparent 20%,
+      transparent 80%,
+      rgba(0, 0, 0, 0.35)
+    );
+    mix-blend-mode: overlay;
+  }
+  .agent-pack__sheen {
+    top: -20%;
+    bottom: -20%;
+    left: 0;
+    width: 56px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.6),
+      transparent
+    );
+    mix-blend-mode: screen;
+    animation: bx-sheen 5.4s ease-in-out infinite;
+  }
+
+  @keyframes bx-pack-float {
+    0%,
+    100% {
+      transform: rotateY(-14deg) rotateX(6deg) translateY(0);
     }
-    to {
-      transform: translateX(100%);
+    50% {
+      transform: rotateY(-7deg) rotateX(3deg) translateY(-14px);
     }
   }
-  /* Sob reduced-motion o foil para no meio do pacote em vez de sumir: a faixa
-     parada ainda diz que aquilo é uma superfície brilhante. */
+  @keyframes bx-sheen {
+    0% {
+      transform: translateX(-140%) skewX(-18deg);
+    }
+    55%,
+    100% {
+      transform: translateX(240%) skewX(-18deg);
+    }
+  }
+  /* Sob reduced-motion o pacote fica parado na inclinação inicial e o brilho
+     some — um objeto girando sozinho é exatamente o que essa preferência pede
+     para não acontecer. */
   @media (prefers-reduced-motion: reduce) {
-    .foil-sweep {
+    .agent-pack__float {
       animation: none;
+      transform: rotateY(-14deg) rotateX(6deg);
+    }
+    .agent-pack__sheen {
+      animation: none;
+      opacity: 0;
     }
   }
 

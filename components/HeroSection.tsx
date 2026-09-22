@@ -121,41 +121,64 @@ export default function HeroSection({ profile }: { profile: Profile }) {
           </div>
         </div>
 
-        {/* O PACOTE DE FIGURINHA — o boneco é a arte impressa nele.
+        {/* O AGENT PACK — o boneco é a arte dentro do pacote de mylar.
 
-            O papelão é escuro NOS DOIS TEMAS, e isso não é escolha de cor: o
-            recorte do avatar tem a camiseta preta transparente, então qualquer
-            fundo claro atrás vazaria através da figura. Aqui isso deixou de ser
-            uma restrição e virou o material — pacote preto com prensa terracota.
+            O artboard é fechado em 300x420 (as medidas de dentro são calibradas
+            para essa caixa), então no estreito ele é ESCALADO, não remedido: o
+            invólucro reserva os 240x336 que a escala de 0,8 ocupa, e o artboard
+            encolhe a partir do canto superior esquerdo. Todo o desenho mora no
+            `globals.css`, sob `.agent-pack`. */}
+        <div className="h-[336px] w-[240px] shrink-0 self-center min-[900px]:h-[420px] min-[900px]:w-[300px]">
+          <div className="agent-pack origin-top-left scale-[0.8] min-[900px]:scale-100">
+            <div className="agent-pack__float">
+              <div className="agent-pack__foil">
+                <div className="agent-pack__crimp agent-pack__crimp--top" />
+                <div className="agent-pack__crimp agent-pack__crimp--bottom" />
+                <div className="agent-pack__corner agent-pack__corner--tl" />
+                <div className="agent-pack__corner agent-pack__corner--tr" />
+                <div className="agent-pack__corner agent-pack__corner--bl" />
+                <div className="agent-pack__corner agent-pack__corner--br" />
 
-            No estreito a altura é `35svh` em vez de fixa: com 340px o pé do
-            boneco caía abaixo da dobra em aparelho pequeno. */}
-        <div className="relative h-[35svh] max-h-[340px] w-[240px] shrink-0 self-center overflow-hidden rounded-xl bg-[linear-gradient(180deg,#14120f,#000)] min-[900px]:h-[420px] min-[900px]:max-h-none min-[900px]:w-[300px]">
-          {/* A prensa de cima, com a linha de rasgar logo abaixo dela. */}
-          <div className="pack-crimp absolute inset-x-0 top-0 z-10 h-[26px] border-b border-dashed border-black/40 bg-brand" />
+                <div className="agent-pack__head">
+                  <span className="agent-pack__title">Agent Pack</span>
+                  <span className="agent-pack__sub">BIELCX · WEB3 · AI</span>
+                </div>
 
-          <Image
-            src="/biel-avatar.png"
-            alt=""
-            width={240}
-            height={352}
-            priority
-            className="absolute bottom-[38px] left-1/2 h-[72%] w-auto -translate-x-1/2 object-contain min-[900px]:h-[330px]"
-          />
+                <div className="agent-pack__window">
+                  <div className="agent-pack__glow" />
+                  <div className="agent-pack__ribs" />
+                  {/* width/height são os do ARQUIVO (1024x1536), não os da caixa:
+                      é assim que o next/image acerta a proporção e não reclama de
+                      `height:auto` no CSS. Quem manda no tamanho na tela é o
+                      `.agent-pack__art`, e o `sizes` evita baixar a variante
+                      grande para um desenho de ~140px de largura. */}
+                  <Image
+                    src="/biel-avatar.png"
+                    alt=""
+                    width={1024}
+                    height={1536}
+                    sizes="200px"
+                    priority
+                    className="agent-pack__art"
+                  />
+                  <div className="agent-pack__code">S01 · 05/05</div>
+                  <div className="agent-pack__bar">
+                    <span>agent.bielcx</span>
+                    <span style={{ color: "#aebf92" }}>● live</span>
+                  </div>
+                </div>
 
-          {/* O rótulo impresso, sobre um degradê que o separa da arte. */}
-          <div className="absolute inset-x-0 bottom-[26px] flex justify-between bg-[linear-gradient(to_top,#000_60%,transparent)] px-5 pb-2.5 pt-6 text-[11px] tracking-[0.1em] text-[#645c50]">
-            <span>bielcx · série 01</span>
-            <span className="text-[#aebf92]">● foil</span>
+                <div className="agent-pack__legend">
+                  <span>5 AGENTS PER PACK</span>
+                  <span>TEAR HERE ▸</span>
+                </div>
+
+                <div className="agent-pack__gloss" />
+                <div className="agent-pack__shade" />
+                <div className="agent-pack__sheen" />
+              </div>
+            </div>
           </div>
-
-          {/* A prensa de baixo. */}
-          <div className="pack-crimp absolute inset-x-0 bottom-0 z-10 h-[26px] bg-brand" />
-
-          <div
-            aria-hidden
-            className="foil-sweep pointer-events-none absolute inset-0 z-20"
-          />
         </div>
       </div>
 
