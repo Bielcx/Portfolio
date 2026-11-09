@@ -14,12 +14,18 @@ export function FarcasterLogo({ size = 18 }: Props) {
   );
 }
 
-/** O hexágono partido da Hive: duas metades em losango, deslocadas. */
+/**
+ * O hexágono partido da Hive: uma divisa fina à esquerda e uma peça cheia à
+ * direita, com um vão diagonal entre as duas. Juntas, as duas fecham a silhueta
+ * do hexágono — é isso que a faz ler como Hive e não como `< >` (a primeira
+ * versão eram duas divisas iguais e parecia símbolo de código).
+ */
 export function HiveLogo({ size = 18 }: Props) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-      <path d="M8.2 3h3.1l-5.1 9 5.1 9H8.2L3 12z" />
-      <path d="M12.6 3h3.2L21 12l-5.2 9h-3.2l5.2-9z" />
+      <path d="M1.5 12 6.7 3h3.4L4.9 12l5.2 9H6.7z" />
+      <path d="M12 3h5.3l5.2 9-5.2 9H12l5.2-9z" />
+      <path d="M8.6 12 11.2 7.5 13.8 12l-2.6 4.5z" />
     </svg>
   );
 }
