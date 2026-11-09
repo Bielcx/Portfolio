@@ -167,20 +167,28 @@ const projects: Project[] = [
     terminalHeader: true,
   },
   {
-    slug: "aros",
-    title: "Aros",
+    // ponytail: entrou no lugar do Aros a pedido (09/11/2026). Crédito
+    // confirmado pelo Gabriel: ele FEZ o app de iOS/Mac (sopa-agency/boar-ios-app),
+    // a versão Windows/Linux (Bielcx/boar-desktop, 123 commits dele entre 14 e
+    // 23/10/2026) e a página /desktop; AJUDOU no benchmark do Android e nas
+    // campanhas do X. Não troque "ajudei" por "fiz" nesses dois.
+    // Vitalik: só o que é público (o teste dele de 26/09/2026,
+    // x.com/VitalikButerin/status/2103762130554204651). Nunca "endossado por",
+    // e nunca perto do token $BOAR (boar-landing/brand/playbook.md).
+    slug: "boar",
+    title: "Boar",
     year: "2026",
     description:
-      "Botão de checkout em USDC na rede Base para quem fatura do exterior — o lojista cola o componente no site e passa a receber em dólar digital, com liquidação em segundos, taxa abaixo de um centavo e sem chargeback nem operadora no meio. Zero backend e zero banco de dados, por decisão de produto: depois de instalado o kit não tem servidor para cair. O hash do userOp é a própria referência do pedido, e o recibo fica verificável on-chain sem servidor nenhum. Monorepo com a biblioteca (React e JS puro) e o site de demonstração. MIT, em testnet.",
-    stack: ["TypeScript", "Base", "USDC", "ERC-8021", "React", "Monorepo"],
+      "IA que roda offline no celular e no computador, sem servidor nenhum: o modelo (llama.cpp) e a biblioteca de conhecimento ficam no aparelho, e cada resposta mostra de onde veio. IA local com modelo aberto está na lista que o Vitalik Buterin chamou de \"sanctuary technology\", e ele testou o Boar em público em 26/09/2026. Eu fiz o app nativo de iOS e Mac (SwiftUI, port do motor do Android com paridade por fixtures), a versão para Windows e Linux e a página dela; ajudei no benchmark do Android e nas campanhas de lançamento no X.",
+    stack: ["Swift", "SwiftUI", "llama.cpp", "Electron", "React Native Web", "RAG offline"],
     outcome:
-      "Checkout em USDC na Base empacotado como biblioteca — sem backend, sem banco, recibo verificável on-chain.",
-    badge: "Testnet · open source (MIT)",
-    badgeShort: "DEMO",
-    href: "https://aros-site.vercel.app",
-    repo: "https://github.com/Bielcx/Aros",
-    screenshotSrc: "/screenshots/aros.png",
-    screenshotMobileSrc: "/screenshots/aros-mobile.png",
+      "IA offline e open source, testada em público pelo Vitalik Buterin — fiz o app de iOS e Mac e a versão Windows e Linux.",
+    badge: "Open source · iOS, Mac, Windows e Linux",
+    badgeShort: "OSS",
+    href: "https://boarapp.com/desktop/",
+    repo: "https://github.com/Bielcx/boar-desktop",
+    screenshotSrc: "/screenshots/boar.png",
+    screenshotMobileSrc: "/screenshots/boar-mobile.png",
     terminalHeader: true,
   },
   {

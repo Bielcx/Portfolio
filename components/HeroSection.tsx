@@ -2,21 +2,22 @@ import Image from "next/image";
 // O HeroSection é server component: a entrada raiz do phosphor é client-only
 // (usa createContext) e quebra o `collect page data` do build. O `/ssr` é a
 // mesma arte sem contexto.
-import { ArrowUUpLeft, EnvelopeSimple, XLogo } from "@phosphor-icons/react/ssr";
+import { EnvelopeSimple, XLogo } from "@phosphor-icons/react/ssr";
 import { MorphingText } from "./ui/morphing-text";
 
 type Profile = {
   email: string;
   x: string;
-  /** O portfólio comercial — o destino do CTA `← web2`. */
-  web2: string;
 };
 
-/** As três linhas chave/valor. Texto fixo, vindo do handoff. */
+/**
+ * As linhas chave/valor. Texto fixo, vindo do handoff. Eram três: a `chain`
+ * ("EVM · Solana · Hive — multichain, in production") saiu a pedido em
+ * 09/11/2026.
+ */
 const rows = [
   ["role", "Full Stack Developer · Web3"],
   ["scope", "end-to-end product — from interface to contract"],
-  ["chain", "EVM · Solana · Hive — multichain, in production"],
 ];
 
 /**
@@ -100,10 +101,12 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             ))}
           </dl>
 
-          {/* Os três caminhos, em ordem de intenção: falar comigo, ver o lado
-              comercial, me achar fora daqui.
+          {/* Os caminhos, em ordem de intenção: falar comigo, me achar fora
+              daqui. Havia um terceiro, o `← web2` para o portfólio comercial, e
+              ele saiu a pedido em 09/11/2026: quem liga os portfolios agora é o
+              site pessoal (gabriel.doabridge.com).
 
-              Só os ícones, os três iguais — o handoff tinha uma pílula cheia e
+              Só os ícones, todos iguais — o handoff tinha uma pílula cheia e
               uma vazada aqui, e o usuário pediu a fileira. O `-ml` puxa a
               fileira de volta para a margem do texto: cada ícone de 18px vive
               centrado numa área de toque de 44px, então sobram 13px de respiro
@@ -120,14 +123,6 @@ export default function HeroSection({ profile }: { profile: Profile }) {
               className="flex size-11 items-center justify-center text-brand transition-colors hover:text-ink"
             >
               <EnvelopeSimple size={18} weight="bold" />
-            </a>
-            <a
-              href={profile.web2}
-              aria-label="Ir para o portfólio web2"
-              title="web2"
-              className="flex size-11 items-center justify-center text-brand transition-colors hover:text-ink"
-            >
-              <ArrowUUpLeft size={18} weight="bold" />
             </a>
             <a
               href={profile.x}
