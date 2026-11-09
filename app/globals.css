@@ -302,9 +302,18 @@
 
 /* a mensagem assinada */
 .nx-sig {
-  display: block; margin: 0 0 80px; border: 1px solid var(--nx-line); padding: 22px;
+  display: block; margin: 0 0 80px; padding: 0; /* sem a moldura: pedido do dono */
   font-size: 12.5px; line-height: 1.8; color: var(--nx-dim); white-space: pre-wrap; overflow-wrap: anywhere;
 }
+
+/* a galeria da carteira: quatro quadrados em pixel, sem moldura de cartão (o NFT da hero já é o cartão) */
+.nx-wallet { margin-bottom: 88px; }
+.nx-wallet-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-top: 24px; }
+.nx-nft { display: grid; gap: 4px; text-decoration: none; font-size: 11px; color: var(--nx-dim); }
+.nx-nft img { display: block; width: 100%; height: auto; aspect-ratio: 1; image-rendering: pixelated; outline: 1px solid var(--nx-line); transition: transform 0.15s steps(2), outline-color 0.15s; }
+.nx-nft:hover img { transform: translate(-3px, -3px); outline: 3px solid var(--nx-red); }
+.nx-nft b { font-family: var(--font-nouns); font-weight: 900; font-size: 22px; color: var(--nx-ink); margin-top: 6px; }
+@media (max-width: 860px) { .nx-wallet-grid { grid-template-columns: repeat(2, 1fr); } }
 
 /* a coleção */
 .nx-h2 { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; border-bottom: 1px solid var(--nx-line); padding-bottom: 12px; }

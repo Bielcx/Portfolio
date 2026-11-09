@@ -34,6 +34,20 @@ export const nft = {
 };
 
 /**
+ * "in the wallet": a galeria dos NFTs nounish da bielcx.eth, curada pelo dono (09/11/2026).
+ * Cada um conferido on-chain com ownerOf(id) == identity.wallet, na Base. As artes em
+ * `public/nft/` são cópias do renderer do nouns.build (o tokenURI on-chain aponta para ele).
+ * Curada de propósito, e não lida ao vivo: carteira recebe NFT de spam, e uma galeria
+ * automática exporia golpe no portfólio. Vendeu ou transferiu? Tire daqui.
+ */
+export const wallet = [
+  { name: "Gnars #3072", traits: "baseball head · dilated guava", img: "/nft/gnars-3072.webp", contract: "0x880fb3cf5c6cc2d7dfc13a993e839a9411200c17", id: 3072 },
+  { name: "Gnars #3383", traits: "paintbrush head · gold · bling anchor", img: "/nft/gnars-3383.webp", contract: "0x880fb3cf5c6cc2d7dfc13a993e839a9411200c17", id: 3383 },
+  { name: "Gnars #5072", traits: "igloo head · orange · moon block", img: "/nft/gnars-5072.webp", contract: "0x880fb3cf5c6cc2d7dfc13a993e839a9411200c17", id: 5072 },
+  { name: "SkateHive #269", traits: "the people's thrasher ⌐◨-◨", img: "/nft/skatehive-269.webp", contract: "0xfe10d3ce1b0f090935670368ec6de00d8d965523", id: 269 },
+] as const;
+
+/**
  * A mensagem assinada pelo dono com a MetaMask (personal_sign, EIP-191) em 09/11/2026,
  * conferida com viem.verifyMessage: recupera o `identity.wallet`.
  * O TEXTO TEM DE SER EXATAMENTE O ASSINADO — mudar uma vírgula invalida a assinatura.

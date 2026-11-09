@@ -1,7 +1,7 @@
 import { ChainTelemetry } from "@/components/ChainTelemetry";
 import { Noggles } from "@/components/Noggles";
 import { FarcasterLogo, HiveLogo } from "@/components/ui/brand-icons";
-import { collection, identity, nft, short, signed } from "@/lib/site";
+import { collection, identity, nft, short, signed, wallet } from "@/lib/site";
 
 /**
  * O site inteiro, numa página: redesign "nounish cypherpunk" (09/11/2026).
@@ -34,7 +34,7 @@ export default function Home() {
               bielcx<span className="nx-red">.eth</span>
             </h1>
             <p className="nx-tagline">
-              <b>onchain builder.</b> front to contract, web2 + web3. shipping on Ethereum, Base, Solana &amp; Hive.
+              <b>onchain builder.</b>{" "}front to contract, web2 + web3. shipping on Ethereum, Base, Solana &amp; Hive.
               nounish by heart, cypherpunk by habit: <b>don&apos;t trust, verify.</b>
             </p>
             <dl className="nx-id">
@@ -45,9 +45,12 @@ export default function Home() {
                 </a>{" "}
                 <span className="nx-dim">→ {short(identity.wallet)}</span>
               </dd>
-              <dt>holds</dt>
+              {/* Era "holds NGGSBRD #46 · rarity nogglesboard, base" — repetia o cartão ao lado.
+                  Agora aponta para a galeria da carteira. */}
+              <dt>nfts</dt>
               <dd>
-                {nft.name} <span className="nx-dim">· rarity nogglesboard, base</span>
+                {String(wallet.length + 1).padStart(2, "0")} nounish <span className="nx-dim">·</span>{" "}
+                <a href="#wallet">in the wallet ↓</a>
               </dd>
               <dt>dao</dt>
               <dd>gnars · nounish action sports</dd>
@@ -106,6 +109,33 @@ export default function Home() {
             etherscan.io/verifiedSignatures ↗
           </a>{" "}
           (address + message + signature above)
+        </section>
+
+        {/* A galeria da carteira: curada à mão em `wallet` (lib/site.ts), cada token conferido on-chain. */}
+        <section id="wallet" className="nx-wallet" aria-labelledby="wallet-title">
+          <div className="nx-h2">
+            <h2 id="wallet-title">in the wallet</h2>
+            <span>
+              {String(wallet.length + 1).padStart(2, "0")} nounish nfts · base · ownerOf verified
+            </span>
+          </div>
+          <div className="nx-wallet-grid">
+            {wallet.map((n) => (
+              <a
+                key={`${n.contract}-${n.id}`}
+                className="nx-nft"
+                href={`https://basescan.org/nft/${n.contract}/${n.id}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element -- pixel art; image-rendering: pixelated */}
+                <img src={n.img} alt={`${n.name}: ${n.traits}`} width={1080} height={1080} loading="lazy" />
+                <b>{n.name}</b>
+                <span>{n.traits}</span>
+                <span className="nx-ok">verify ↗</span>
+              </a>
+            ))}
+          </div>
         </section>
 
         <section id="work" aria-labelledby="collection-title">
