@@ -2,13 +2,25 @@ import Image from "next/image";
 // O HeroSection é server component: a entrada raiz do phosphor é client-only
 // (usa createContext) e quebra o `collect page data` do build. O `/ssr` é a
 // mesma arte sem contexto.
-import { EnvelopeSimple, XLogo } from "@phosphor-icons/react/ssr";
+import { EnvelopeSimple, GithubLogo, XLogo } from "@phosphor-icons/react/ssr";
+import { ChainTelemetry } from "./ChainTelemetry";
+import { FarcasterLogo, HiveLogo } from "./ui/brand-icons";
 import { MorphingText } from "./ui/morphing-text";
 
 type Profile = {
   email: string;
   x: string;
+  github: string;
+  farcaster: string;
+  hive: string;
+  /** Nome ENS e a carteira para onde ele aponta (conferidos on-chain em 09/11/2026,
+   *  com o nome principal configurado nos dois sentidos). */
+  ens: string;
+  wallet: string;
 };
+
+/** "0x419EB581…a0b1" → "0x419E…a0b1": o começo e o fim, que é como se confere endereço. */
+const curto = (addr: string) => `${addr.slice(0, 6)}…${addr.slice(-4)}`;
 
 /**
  * As linhas chave/valor. Texto fixo, vindo do handoff. Eram três: a `chain`
@@ -19,12 +31,6 @@ const rows = [
   ["role", "Full Stack Developer · Web3"],
   ["scope", "end-to-end product — from interface to contract"],
 ];
-
-/**
- * A telemetria do rodapé é DECORATIVA e estática, como o handoff pede. Não são
- * medidas de nada — se um dia virarem, elas passam a vir de fora daqui.
- */
-const telemetry = ["lat 38ms", "node br-01", "uptime 99.9%"];
 
 /**
  * O HERO — a primeira tela inteira, e só ela.
@@ -99,6 +105,24 @@ export default function HeroSection({ profile }: { profile: Profile }) {
                 <dd className="text-ink-muted">{value}</dd>
               </div>
             ))}
+            {/* A identidade on-chain: o nome ENS e a carteira, verificáveis num
+                clique. O link vai para o Etherscan do endereço, que mostra o
+                nome principal (`bielcx.eth`) de volta. */}
+            <div className="flex gap-[18px]">
+              <dt className="w-[76px] shrink-0 text-ink-faint">ens</dt>
+              <dd className="text-ink-muted">
+                <a
+                  href={`https://etherscan.io/address/${profile.wallet}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  title={profile.wallet}
+                  className="text-brand transition-colors hover:text-ink"
+                >
+                  {profile.ens}
+                </a>{" "}
+                <span className="text-ink-faint">· {curto(profile.wallet)}</span>
+              </dd>
+            </div>
           </dl>
 
           {/* Os caminhos, em ordem de intenção: falar comigo, me achar fora
@@ -124,16 +148,27 @@ export default function HeroSection({ profile }: { profile: Profile }) {
             >
               <EnvelopeSimple size={18} weight="bold" />
             </a>
-            <a
-              href={profile.x}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Perfil no X"
-              title="x"
-              className="flex size-11 items-center justify-center text-brand transition-colors hover:text-ink"
-            >
-              <XLogo size={18} weight="bold" />
-            </a>
+            {/* As redes do meio (09/11/2026): Farcaster, Hive e GitHub ao lado
+                do X. Farcaster e Hive não existem no Phosphor e são SVG próprio
+                (`ui/brand-icons.tsx`), no mesmo tamanho. */}
+            {[
+              { href: profile.x, label: "Perfil no X", title: "x", icon: <XLogo size={18} weight="bold" /> },
+              { href: profile.farcaster, label: "Perfil no Farcaster", title: "farcaster", icon: <FarcasterLogo /> },
+              { href: profile.hive, label: "Perfil na Hive", title: "hive", icon: <HiveLogo /> },
+              { href: profile.github, label: "Perfil no GitHub", title: "github", icon: <GithubLogo size={18} weight="bold" /> },
+            ].map((r) => (
+              <a
+                key={r.title}
+                href={r.href}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={r.label}
+                title={r.title}
+                className="flex size-11 items-center justify-center text-brand transition-colors hover:text-ink"
+              >
+                {r.icon}
+              </a>
+            ))}
           </div>
         </div>
 
@@ -198,18 +233,7 @@ export default function HeroSection({ profile }: { profile: Profile }) {
 
       {/* BARRA DE STATUS */}
       <div className="flex items-center justify-between border-t border-line px-6 py-[18px] text-[11px] tracking-[0.12em] text-ink-faint min-[900px]:px-10">
-        <span className="flex gap-6 min-[900px]:gap-[26px]">
-          {telemetry.map((item) => (
-            <span
-              key={item}
-              className={
-                item.startsWith("uptime") ? "hidden min-[900px]:inline" : undefined
-              }
-            >
-              {item}
-            </span>
-          ))}
-        </span>
+        <ChainTelemetry />
         <span>2026</span>
       </div>
     </section>

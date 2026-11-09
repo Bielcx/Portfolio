@@ -8,6 +8,10 @@ const profile = {
   email: "biel.cavalcanti1@hotmail.com",
   github: "https://github.com/Bielcx",
   x: "https://x.com/bielthegoat",
+  farcaster: "https://farcaster.xyz/bielcx",
+  hive: "https://peakd.com/@bielcx",
+  ens: "bielcx.eth",
+  wallet: "0x419EB581BB57Cf3761F11C77EB85CB2bbc91a0b1",
 };
 
 
@@ -102,6 +106,22 @@ export default function Home() {
                 className="flex min-h-11 items-center text-ink-muted hover:text-ink transition-colors"
               >
                 X ↗
+              </a>
+              <a
+                href={profile.farcaster}
+                target="_blank"
+                rel="noreferrer"
+                className="flex min-h-11 items-center text-ink-muted hover:text-ink transition-colors"
+              >
+                Farcaster ↗
+              </a>
+              <a
+                href={profile.hive}
+                target="_blank"
+                rel="noreferrer"
+                className="flex min-h-11 items-center text-ink-muted hover:text-ink transition-colors"
+              >
+                Hive ↗
               </a>
             </div>
           </section>
