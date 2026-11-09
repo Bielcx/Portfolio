@@ -9,7 +9,7 @@ const profile = {
   github: "https://github.com/Bielcx",
   x: "https://x.com/bielthegoat",
   // O portfólio comercial — o outro lado do portal, e o destino do `← web2`.
-  web2: "https://gabriel.doabridge.com",
+  web2: "https://sites.gabriel.doabridge.com",
 };
 
 

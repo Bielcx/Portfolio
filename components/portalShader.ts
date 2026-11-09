@@ -1,6 +1,6 @@
 /**
  * O PORTAL DE CHEGADA — a outra metade da passagem que começa no portfólio
- * comercial (`gabriel.doabridge.com`). Lá o clique no botão "Web3" abre um
+ * comercial (`sites.gabriel.doabridge.com`). Lá o clique no botão "Web3" abre um
  * anel verde que engole a tela; aqui ele se fecha e entrega o site.
  *
  * **É o MESMO shader dos dois lados, tocado ao contrário.** Lá o progresso vai

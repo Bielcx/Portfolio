@@ -25,7 +25,7 @@ import { PORTAL_FRAG } from "@/components/portalShader"
  */
 
 /** De onde a viagem pode vir. Sem isso, o portal vira susto aleatório. */
-const ORIGENS = ["gabriel.doabridge.com", "bielcx-portfolio.vercel.app"]
+const ORIGENS = ["sites.gabriel.doabridge.com", "bielcx-portfolio.vercel.app"]
 
 /** Duração do fechamento, em ms — o mesmo tempo da abertura, do outro lado. */
 const DURACAO = 900

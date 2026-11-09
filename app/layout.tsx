@@ -24,7 +24,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteUrl = "https://gabrielcavalcanti.vercel.app";
+const siteUrl = "https://web3.gabriel.doabridge.com";
 const title = "Gabriel Cavalcanti — Full Stack Developer";
 const description =
   "Portfolio de Gabriel Cavalcanti, desenvolvedor Full Stack especializado em React, Next.js e Web3. Baseado no Brasil.";
@@ -92,7 +92,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{
             __html: `(function(){try{
   var r = document.referrer && new URL(document.referrer).host;
-  var meu = ["gabriel.doabridge.com","bielcx-portfolio.vercel.app"];
+  var meu = ["sites.gabriel.doabridge.com","bielcx-portfolio.vercel.app"];
   var ok = r && (meu.indexOf(r) > -1 || /^(localhost|127\\.0\\.0\\.1):\\d+$/.test(r));
   if (!ok) return;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
